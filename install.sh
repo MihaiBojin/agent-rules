@@ -291,6 +291,11 @@ do_global() {
   if want "$HOME/.claude"; then
     say " Claude Code"
     link_rules "$HOME/.claude/rules"
+    # Absolute path into this repo rather than $CLAUDE_PROJECT_DIR: the global
+    # entry has to resolve in repos that were never wired per-project.
+    # Comes out when the prose check ships as a plugin hook instead:
+    # https://github.com/MihaiBojin/agent-plugins/issues/12
+    wire_settings "$HOME/.claude/settings.json" "$HOOK_SRC"
   else
     say  " Claude Code  not detected (~/.claude missing) — AGENT_RULES_ALL=1 to force"
   fi
@@ -330,7 +335,7 @@ do_project() {
   link_rules "$dir/.claude/rules"
   link "$dir/.claude/hooks/check-prose.sh" "$HOOK_SRC"
   link "$dir/.claude/hooks/prose-patterns.txt" "$PAT_SRC"
-  wire_settings "$dir/.claude/settings.json"
+  wire_settings "$dir/.claude/settings.json" '$CLAUDE_PROJECT_DIR/.claude/hooks/check-prose.sh'
 
   say " Antigravity"
   link_rules "$dir/.agents/rules"
@@ -348,7 +353,7 @@ do_project() {
 
 wire_settings() {
   f="$1"
-  cmd='$CLAUDE_PROJECT_DIR/.claude/hooks/check-prose.sh'
+  cmd="$2"
   if ! command -v jq >/dev/null 2>&1; then
     note "  manual    jq not found; add this to $f yourself:"
     note "            PostToolUse matcher \"Write|Edit\" -> command $cmd"
@@ -382,6 +387,33 @@ wire_settings() {
   fi
 }
 
+unwire_settings() {
+  f="$1"; cmd="$2"
+  [ -f "$f" ] || return 0
+  command -v jq >/dev/null 2>&1 || {
+    note "  manual    jq not found; drop the $cmd hook from $f yourself"
+    return 0
+  }
+  jq -e --arg c "$cmd" '
+        [ .hooks.PostToolUse[]?.hooks[]?.command ] | index($c) != null
+      ' "$f" >/dev/null 2>&1 || return 0
+  tmp="$(mktemp)"
+  if jq --arg c "$cmd" '
+        .hooks.PostToolUse |= ( map(
+          .hooks |= map(select(.command != $c))
+        ) | map(select((.hooks | length) > 0)) )
+        | if (.hooks.PostToolUse | length) == 0 then del(.hooks.PostToolUse) else . end
+        | if (.hooks | length) == 0 then del(.hooks) else . end
+      ' "$f" > "$tmp" 2>/dev/null; then
+    bak="$f.bak-$STAMP"
+    cp "$f" "$bak" && note "  backup    $f -> $bak"
+    mv "$tmp" "$f" && say "  updated   $f (hook removed)"; CHANGED=1
+  else
+    rm -f "$tmp"
+    note "  FAILED    could not edit $f — is it valid JSON?"
+  fi
+}
+
 # ------------------------------------------------------------------- status
 
 do_status() {
@@ -407,6 +439,12 @@ do_status() {
     short="$(printf '%s' "$p" | sed "s|^$HOME/|~/|")"
     printf '%-46s %s\n' "$short" "$(state "$p")"
   done
+  short="$(printf '%s' "$HOME/.claude/settings.json" | sed "s|^$HOME/|~/|")"
+  if [ -f "$HOME/.claude/settings.json" ] && grep -qF "$HOOK_SRC" "$HOME/.claude/settings.json" 2>/dev/null; then
+    printf '%-46s %s\n' "$short" "hook"
+  else
+    printf '%-46s %s\n' "$short" "-"
+  fi
   short="$(printf '%s' "$HOME/.codex/config.toml" | sed "s|^$HOME/|~/|")"
   if [ -f "$HOME/.codex/config.toml" ] && grep -qF "$TOML_BEGIN" "$HOME/.codex/config.toml" 2>/dev/null; then
     printf '%-46s %s\n' "$short" "hook"
@@ -414,7 +452,7 @@ do_status() {
     printf '%-46s %s\n' "$short" "-"
   fi
   printf '\nlinked (n) = n of %d rule files point into this repo\n' "$(ls "$RULES_DIR"/*.md | wc -l | tr -d ' ')"
-  printf 'block = managed section inside a bigger file   hook = SessionStart hook registered\n'
+  printf 'block = managed section inside a bigger file   hook = hook registered\n'
   printf 'occupied = something else is there   - = nothing\n'
 }
 
@@ -432,7 +470,8 @@ do_uninstall() {
   unlink_ours "$dir/.claude/hooks/prose-patterns.txt"
   unlink_rules "$dir/.agents/rules"
   unlink_ours "$dir/AGENTS.md"
-  say  "settings.json hook entry left in place — remove it by hand if you want it gone"
+  unwire_settings "$HOME/.claude/settings.json" "$HOOK_SRC"
+  say  "project settings.json hook entry left in place — remove it by hand if you want it gone"
   say  "backups (*.bak-*) are never deleted"
 }
 
