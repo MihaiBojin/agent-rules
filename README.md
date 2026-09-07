@@ -40,7 +40,7 @@ matters. Move the repo later and you re-run `make install`.
 | Command | What it does |
 |---|---|
 | `make build` | Regenerate `generated/AGENTS.md` from `rules/*.md` |
-| `make install` | User-level wiring, every tool it detects |
+| `make install` | User-level wiring plus the prose hook, every tool it detects |
 | `make project` | Per-repo wiring plus the prose hook. `DIR=/path` targets another repo |
 | `make status` | What is wired up right now |
 | `make uninstall` | Undo both scopes |
@@ -116,9 +116,20 @@ Rules are context, not enforcement, and adherence drifts over a long session.
 The prose hook is the backstop: it runs on every write, greps the file, and
 exits 2 so Claude sees its own violations and fixes them.
 
-`install.sh project` links it into `.claude/hooks/` and adds the `PostToolUse`
-entry to `.claude/settings.json`, skipping the edit if it's already there. That
-step needs `jq`; without it you get the snippet on stderr and add it yourself.
+`install.sh global` adds the `PostToolUse` entry to `~/.claude/settings.json`
+pointing at `hooks/check-prose.sh` in this repo by absolute path, so it fires in
+every repo whether or not that repo was wired. `install.sh project` links the
+script into `.claude/hooks/` and adds an entry to `.claude/settings.json` that
+goes through `$CLAUDE_PROJECT_DIR`, so the repo carries its own copy for anyone
+who clones it. Both skip the edit when it's already there, and both need `jq`;
+without it you get the snippet on stderr and add it yourself.
+
+Wiring both scopes in the same repo runs the check twice on each write. The
+second run reports the same lines, so the cost is duplicated stderr.
+
+`install.sh uninstall` drops the global entry, since it points into this repo
+and nothing else can claim it. The project entry is left alone, because it may
+be committed and shared.
 
 It only reads `.md`, `.markdown`, and `.txt`. Fenced code blocks are blanked
 before checking, so line numbers in the output match the real file.
