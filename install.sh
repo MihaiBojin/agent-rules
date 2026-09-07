@@ -293,6 +293,8 @@ do_global() {
     link_rules "$HOME/.claude/rules"
     # Absolute path into this repo rather than $CLAUDE_PROJECT_DIR: the global
     # entry has to resolve in repos that were never wired per-project.
+    # Comes out when the prose check ships as a plugin hook instead:
+    # https://github.com/MihaiBojin/agent-plugins/issues/12
     wire_settings "$HOME/.claude/settings.json" "$HOOK_SRC"
   else
     say  " Claude Code  not detected (~/.claude missing) — AGENT_RULES_ALL=1 to force"

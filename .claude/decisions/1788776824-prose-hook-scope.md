@@ -24,3 +24,8 @@ alt: have `project` skip the entry when the global one exists — couples the tw
 q: Does `uninstall` remove the global entry
 a: yes, and it leaves the project one
 why: the global entry names an absolute path into this repo so nothing else can own it, while a project entry may be committed and shared
+
+q: Does the global wiring stay once the prose check ships as a plugin
+a: no, it comes out when MihaiBojin/agent-plugins#12 lands, and stays until then
+why: no plugin exists yet, and without it the check runs only in repos wired with `install.sh project`
+alt: leave the check project-only until the plugin exists — most repos go unchecked in the meantime
