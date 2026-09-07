@@ -5,19 +5,21 @@ A decision that is not quick and easy gets a file:
 `.claude/decisions/<unix-timestamp>-<slug>.md`, committed with the work it
 belongs to. Ask for one at any point and I write it however small it looks.
 
-`**/.claude/` is excluded in `~/.config/git/ignore`, so the first decision file
-in a repo also puts this in that repo's `.gitignore`:
+`~/.config/git/ignore` excludes `**/.claude/` and carves the decisions back out,
+which covers every repo without a per-repo `.gitignore`:
 
 ```gitignore
-# .claude/ is ignored globally; decisions are the exception
-!.claude/
-.claude/*
-!.claude/decisions/
+## Claude
+!**/.claude/
+**/.claude/*
+!**/.claude/decisions/
 ```
 
 Order matters. Git will not re-include a path whose parent directory is
 excluded, so `.claude/` has to come back before `.claude/decisions/` can. The
-rest of `.claude/` stays ignored.
+rest of `.claude/` stays ignored. That file is machine-local and tracked
+nowhere, so if `git check-ignore` says a decision file is ignored, the machine
+is missing those three lines: say so rather than reaching for `git add -f`.
 
 The file is the only place the history lives. Answers, commit bodies, PR
 descriptions, READMEs and code comments say what is true now and point at the

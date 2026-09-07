@@ -37,7 +37,8 @@ a: no, the log is the one place history is kept, everything else still describes
 why: 30-new-state keeps history out of prose read cold, not out of a record kept for lookup
 
 q: `**/.claude/` is ignored globally, so how does a decision file get committed
-a: the first decision file in a repo adds an un-ignore stanza to that repo's `.gitignore`
-why: it is self-healing, no installer run and no `git add -f` to remember
+a: carve `**/.claude/decisions/` back out in `~/.config/git/ignore`
+why: one edit covers every repo, and a repo with no decisions yet reports the same `git status` as before
+alt: an un-ignore stanza in each repo's `.gitignore` — travels with the repo, at the cost of a stanza in every repo I touch
 alt: `decisions/` at the repo root — committed by default, a new top-level directory in every repo
 alt: `git add -f` per file — invisible to everything that respects gitignore
