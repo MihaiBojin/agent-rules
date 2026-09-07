@@ -1,0 +1,4 @@
+# .claude/ is ignored globally; decisions are the exception
+!.claude/
+.claude/*
+!.claude/decisions/

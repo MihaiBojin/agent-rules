@@ -8,7 +8,19 @@ Lead each point with the verdict: implemented, not implemented, or implemented
 but broken. Never bury it below the explanation.
 
 When I raise several topics, number them (1, then 1.1, 1.2) so I can reply by
-reference.
+reference. Each number gets a heading I can read cold:
+
+```markdown
+## 2.1 which git binary the installer uses
+Context: .claude/decisions/1757238000-git-binary-choice.md
+Topic: the installer has to pick a git binary and the choice keeps coming back
+```
+
+`Topic:` says what problem 2.1 exists to solve, in one line, and stays word for
+word the same while 2.1 is open. `Context:` points at the decision file from
+rules/50-decisions.md, path relative to the repo root so `cat` and `@` both take
+it; a topic with no file yet carries no Context line. Never assume I remember a
+topic from an earlier prompt or an earlier day.
 
 When a task holds decisions only I can make, reply with those decisions alone
 and nothing else. Number them to match the response you will give afterwards,
