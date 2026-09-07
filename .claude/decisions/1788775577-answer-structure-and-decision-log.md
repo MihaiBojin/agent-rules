@@ -47,3 +47,8 @@ q: Should decision tracking be switchable, and does it belong in a plugin
 a: deferred to issue #6, the rule stays always-on until that lands
 why: the toggle has to reach Codex and Hermes too, which have no plugin host, and that shape is not settled
 alt: ship a toggle in Claude Code's settings.json now — leaves the other tools with no switch
+
+q: Which marker carries a numbered point in an answer
+a: a trailing slash — `1/`, `1.1/`
+why: `#1` autolinks to issue #1 wherever an answer is pasted into GitHub
+alt: bare `1`, `1.1` — reads as prose when a sentence starts with it
