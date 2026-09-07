@@ -14,3 +14,8 @@ alt: match the surrounding file — every generated document becomes evidence fo
 q: Does a table's `—` count against the em-dash budget
 a: no, deliberate notation is exempt: table cells meaning "not present", changelog shape, fill-in templates
 why: a style review counted table cells as prose and reported MihaiBojin/origin#1 at 5.1x the budget; prose only it was 8 em-dashes in 1,324 words, 1.8x
+
+q: US or British spelling in these repos
+a: US
+why: agent-rules has zero British spellings, and across the MihaiBojin repos it runs 142 US to 34 British with most of the British inside vendored files
+alt: match a neighboring repo, which is the calibration this section exists to stop
