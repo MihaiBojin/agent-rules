@@ -1,8 +1,9 @@
 # agent-rules
 
 Rules for coding agents, kept in one place and referenced from projects instead
-of copy-pasted. Four of them: how to write prose for humans, how to answer me,
-how to describe a change, and how to treat git history.
+of copy-pasted. Five of them: how to write prose for humans, how to answer me,
+how to describe a change, how to treat git history, and where decisions get
+recorded.
 
 `rules/*.md` holds them, one file per rule. Everything else exists to get those
 files in front of Claude Code, Codex, and Antigravity without keeping a separate
@@ -15,6 +16,7 @@ copy for each.
 | `rules/*.md` | The rules, one per file. The only files with content worth editing. |
 | `generated/AGENTS.md` | Built from `rules/*.md` by `make build`. Codex reads one file and cannot import another, so it gets the concatenation. |
 | `generated/README.md` | Says the above to anyone who opens the directory. |
+| `.claude/decisions/*.md` | One file per non-trivial decision, named `<unix-timestamp>-<slug>`. Every repo I work in gets these, this one included. |
 | `install.sh` | Wires the rules into each tool's expected location. |
 | `Makefile` | Thin wrapper over `install.sh`. |
 | `hooks/check-prose.sh` | Claude Code `PostToolUse` hook. Greps written markdown and hands violations back. |
