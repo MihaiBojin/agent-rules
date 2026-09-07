@@ -42,3 +42,8 @@ why: one edit covers every repo, and a repo with no decisions yet reports the sa
 alt: an un-ignore stanza in each repo's `.gitignore` — travels with the repo, at the cost of a stanza in every repo I touch
 alt: `decisions/` at the repo root — committed by default, a new top-level directory in every repo
 alt: `git add -f` per file — invisible to everything that respects gitignore
+
+q: Should decision tracking be switchable, and does it belong in a plugin
+a: deferred to issue #6, the rule stays always-on until that lands
+why: the toggle has to reach Codex and Hermes too, which have no plugin host, and that shape is not settled
+alt: ship a toggle in Claude Code's settings.json now — leaves the other tools with no switch
