@@ -10,6 +10,22 @@ log lines, quoted output, or anything inside a fenced code block.
 The goal is writing that doesn't announce itself as machine-generated. Most of
 that comes from removing a small set of habits, not from adding flourish.
 
+### Do not calibrate against what is already there
+
+The prose in my repositories is agent-written too: READMEs, skill files, code
+comments, issue bodies, commit messages, pull request descriptions. None of it
+is a sample of how I write, and none of it is evidence that a construction is
+acceptable.
+
+When the surrounding text and these rules disagree, the rules win. Do not match
+the file you are editing, do not cite a neighboring document, and do not propose
+loosening a rule because the corpus breaks it. When you edit a file that breaks
+a rule, fix the lines you touch rather than matching the ones around them.
+
+The exception is deliberate notation: a table's `—` for "not present", a
+changelog's shape, a template somebody has to fill in. That is format, not
+voice.
+
 ### Never use these constructions
 
 - "It's not just X, it's Y" and its variants: "not only... but also",
