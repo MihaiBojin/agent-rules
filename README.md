@@ -162,8 +162,8 @@ This repo carries no root `AGENTS.md` or `CLAUDE.md` on purpose. Either one
 would load as guidance for agents working on the repo itself, which is also why
 the artifact lives in `generated/`.
 
-Keep the concatenation under ~150 lines. Adherence falls off as it grows, and
-every line costs context in every session.
+Keep the concatenation under ~200 lines, the point where Claude Code's own
+adherence drops off. Every line costs context in every session.
 
 Two habits worth keeping:
 
