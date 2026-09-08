@@ -53,6 +53,25 @@ nothing is reported. Anything else in the way is moved to
 `install.sh global` skips a tool whose config directory is missing. Set
 `AGENT_RULES_ALL=1` to wire up one you haven't run yet.
 
+## Decision files
+
+`rules/50-decisions.md` puts one file per non-trivial decision in
+`.claude/decisions/`, named `<unix-timestamp>-<slug>`. `~/.config/git/ignore`
+excludes `**/.claude/` and carves those back out, which covers every repo
+without a per-repo `.gitignore`:
+
+```gitignore
+## Claude
+!**/.claude/
+**/.claude/*
+!**/.claude/decisions/
+```
+
+Order matters. Git will not re-include a path whose parent directory is
+excluded, so `.claude/` has to come back before `.claude/decisions/` can. That
+file is machine-local and tracked nowhere, so a machine without those lines
+cannot commit a decision file.
+
 ## Where the rules land
 
 | Tool | Global | Project | Scoping |
@@ -105,8 +124,8 @@ Each tool caps how much instruction text it will load:
 | Codex | 32,768 bytes for project docs (`project_doc_max_bytes`), and the same again for the hook's `additionalContextLimit` |
 | Claude Code | 4 MiB, but adherence drops past ~200 lines |
 
-`generated/AGENTS.md` is 12,041 bytes across 277 lines, so the tightest of these
-leaves 2.7x headroom. The individual `rules/*.md` run 545 bytes to 3,621.
+`generated/AGENTS.md` is 9,480 bytes across 199 lines, so the tightest of these
+leaves 3.4x headroom. The individual `rules/*.md` run 526 bytes to 2,405.
 
 ## The prose hook
 
