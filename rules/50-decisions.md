@@ -5,25 +5,13 @@ A decision that is not quick and easy gets a file:
 `.claude/decisions/<unix-timestamp>-<slug>.md`, committed with the work it
 belongs to. Ask for one at any point and I write it however small it looks.
 
-`~/.config/git/ignore` excludes `**/.claude/` and carves the decisions back out,
-which covers every repo without a per-repo `.gitignore`:
-
-```gitignore
-## Claude
-!**/.claude/
-**/.claude/*
-!**/.claude/decisions/
-```
-
-Order matters. Git will not re-include a path whose parent directory is
-excluded, so `.claude/` has to come back before `.claude/decisions/` can. The
-rest of `.claude/` stays ignored. That file is machine-local and tracked
-nowhere, so if `git check-ignore` says a decision file is ignored, the machine
-is missing those three lines: say so rather than reaching for `git add -f`.
-
 The file is the only place the history lives. Answers, commit bodies, PR
 descriptions, READMEs and code comments say what is true now and point at the
 file instead of retelling how we got there.
+
+`~/.config/git/ignore` carves these back out of the `**/.claude/` exclusion on
+my machines. If `git check-ignore` says a decision file is ignored, that machine
+is missing the carve-out: say so rather than reaching for `git add -f`.
 
 One file per topic, however many decisions the topic takes:
 
@@ -45,17 +33,10 @@ alt: a configured path — one more thing to set per machine
 
 `Topic:` is the line the answer heading carries, word for word, so the wording
 outlives the session. `Status:` reads `open` while any `q:` has no `a:`, and
-`decided <ISO date>` once none do. Entries append in order under the date they
-were written.
+`decided <ISO date>` once none do. Entries append under the date they were
+written. `why:` is the reason that was argued, one line, left out when nobody
+gave one. `alt:` is one rejected option per line and what killed it: keep the
+number, drop the method. An option nobody weighed does not get a line.
 
-`why:` carries the reason that was argued, in one line. Leave it out when nobody
-gave one.
-
-`alt:` carries one rejected option per line and what killed it. Keep the number,
-drop the method: "700ms of extra runtime", not which benchmark said so, which
-tool ran it, or what the other rows were. An option nobody weighed is not an
-alternative and does not get a line.
-
-Nothing between entries. No paragraph explaining the entry above it, no
-restatement of the options in prose. Anything needing more than those four lines
-belongs in the code or its comment.
+Nothing between entries. No paragraph explaining the one above it. Anything
+needing more than those four lines belongs in the code or its comment.

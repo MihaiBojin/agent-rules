@@ -1,9 +1,9 @@
 # agent-rules
 
 Rules for coding agents, kept in one place and referenced from projects instead
-of copy-pasted. Five of them: how to write prose for humans, how to answer me,
-how to describe a change, how to treat git history, and where decisions get
-recorded.
+of copy-pasted. Six of them: how to write prose for humans, how to answer me,
+how to describe a change, how to treat git history, where decisions get
+recorded, and how much to build when writing code.
 
 `rules/*.md` holds them, one file per rule. Everything else exists to get those
 files in front of Claude Code, Codex, and Antigravity without keeping a separate
@@ -16,7 +16,6 @@ copy for each.
 | `rules/*.md` | The rules, one per file. The only files with content worth editing. |
 | `generated/AGENTS.md` | Built from `rules/*.md` by `make build`. Codex reads one file and cannot import another, so it gets the concatenation. |
 | `generated/README.md` | Says the above to anyone who opens the directory. |
-| `.claude/decisions/*.md` | One file per non-trivial decision, named `<unix-timestamp>-<slug>`. Every repo I work in gets these, this one included. |
 | `install.sh` | Wires the rules into each tool's expected location. |
 | `Makefile` | Thin wrapper over `install.sh`. |
 | `hooks/check-prose.sh` | Claude Code `PostToolUse` hook. Greps written markdown and hands violations back. |
@@ -53,6 +52,25 @@ nothing is reported. Anything else in the way is moved to
 
 `install.sh global` skips a tool whose config directory is missing. Set
 `AGENT_RULES_ALL=1` to wire up one you haven't run yet.
+
+## Decision files
+
+`rules/50-decisions.md` puts one file per non-trivial decision in
+`.claude/decisions/`, named `<unix-timestamp>-<slug>`. `~/.config/git/ignore`
+excludes `**/.claude/` and carves those back out, which covers every repo
+without a per-repo `.gitignore`:
+
+```gitignore
+## Claude
+!**/.claude/
+**/.claude/*
+!**/.claude/decisions/
+```
+
+Order matters. Git will not re-include a path whose parent directory is
+excluded, so `.claude/` has to come back before `.claude/decisions/` can. That
+file is machine-local and tracked nowhere, so a machine without those lines
+cannot commit a decision file.
 
 ## Where the rules land
 
@@ -106,9 +124,8 @@ Each tool caps how much instruction text it will load:
 | Codex | 32,768 bytes for project docs (`project_doc_max_bytes`), and the same again for the hook's `additionalContextLimit` |
 | Claude Code | 4 MiB, but adherence drops past ~200 lines |
 
-`generated/AGENTS.md` is 5,462 bytes across 126 lines, so the tightest of these
-leaves better than 2x headroom. The individual `rules/*.md` run 545 bytes to
-2,867.
+`generated/AGENTS.md` is 9,480 bytes across 199 lines, so the tightest of these
+leaves 3.4x headroom. The individual `rules/*.md` run 526 bytes to 2,405.
 
 ## The prose hook
 
@@ -164,8 +181,8 @@ This repo carries no root `AGENTS.md` or `CLAUDE.md` on purpose. Either one
 would load as guidance for agents working on the repo itself, which is also why
 the artifact lives in `generated/`.
 
-Keep the concatenation under ~150 lines. Adherence falls off as it grows, and
-every line costs context in every session.
+Keep the concatenation under ~200 lines, the point where Claude Code's own
+adherence drops off. Every line costs context in every session.
 
 Two habits worth keeping:
 
