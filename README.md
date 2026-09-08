@@ -1,9 +1,9 @@
 # agent-rules
 
 Rules for coding agents, kept in one place and referenced from projects instead
-of copy-pasted. Five of them: how to write prose for humans, how to answer me,
-how to describe a change, how to treat git history, and where decisions get
-recorded.
+of copy-pasted. Six of them: how to write prose for humans, how to answer me,
+how to describe a change, how to treat git history, where decisions get
+recorded, and how much to build when writing code.
 
 `rules/*.md` holds them, one file per rule. Everything else exists to get those
 files in front of Claude Code, Codex, and Antigravity without keeping a separate
@@ -106,9 +106,8 @@ Each tool caps how much instruction text it will load:
 | Codex | 32,768 bytes for project docs (`project_doc_max_bytes`), and the same again for the hook's `additionalContextLimit` |
 | Claude Code | 4 MiB, but adherence drops past ~200 lines |
 
-`generated/AGENTS.md` is 5,462 bytes across 126 lines, so the tightest of these
-leaves better than 2x headroom. The individual `rules/*.md` run 545 bytes to
-2,867.
+`generated/AGENTS.md` is 12,041 bytes across 277 lines, so the tightest of these
+leaves 2.7x headroom. The individual `rules/*.md` run 545 bytes to 3,621.
 
 ## The prose hook
 
