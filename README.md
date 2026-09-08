@@ -16,7 +16,6 @@ copy for each.
 | `rules/*.md` | The rules, one per file. The only files with content worth editing. |
 | `generated/AGENTS.md` | Built from `rules/*.md` by `make build`. Codex reads one file and cannot import another, so it gets the concatenation. |
 | `generated/README.md` | Says the above to anyone who opens the directory. |
-| `.claude/decisions/*.md` | One file per non-trivial decision, named `<unix-timestamp>-<slug>`. Every repo I work in gets these, this one included. |
 | `install.sh` | Wires the rules into each tool's expected location. |
 | `Makefile` | Thin wrapper over `install.sh`. |
 | `hooks/check-prose.sh` | Claude Code `PostToolUse` hook. Greps written markdown and hands violations back. |
