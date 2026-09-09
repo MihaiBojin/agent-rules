@@ -56,9 +56,14 @@ nothing is reported. Anything else in the way is moved to
 ## Decision files
 
 `rules/50-decisions.md` puts one file per non-trivial decision in
-`.claude/decisions/`, named `<unix-timestamp>-<slug>`. `~/.config/git/ignore`
-excludes `**/.claude/` and carves those back out, which covers every repo
-without a per-repo `.gitignore`:
+`.claude/decisions/`, named `<unix-timestamp>-<slug>`. The directory is the
+switch: a repo without one is never written to, and a repo that has recorded
+something turns the log off with a `.disabled` file inside it rather than
+deleting the record. The `decisions` plugin in MihaiBojin/agent-plugins moves
+that switch with `/decisions:enable` and `/decisions:disable`.
+
+`~/.config/git/ignore` excludes `**/.claude/` and carves the directory back
+out, which covers every repo without a per-repo `.gitignore`:
 
 ```gitignore
 ## Claude

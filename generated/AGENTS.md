@@ -125,17 +125,17 @@ offer to.
 
 ## Decision log
 
-A decision that is not quick and easy gets a file:
-`.claude/decisions/<unix-timestamp>-<slug>.md`, committed with the work it
-belongs to. Ask for one at any point and I write it however small it looks.
+`.claude/decisions/` is the switch: where it exists without a `.disabled` file,
+a decision that is not quick and easy gets a file there,
+`<unix-timestamp>-<slug>.md`, committed with the work it belongs to. Where it
+does not, write nothing. Ask for one anywhere and I turn the log on and write
+it, however small it looks.
 
 The file is the only place the history lives. Answers, commit bodies, PR
-descriptions, READMEs and code comments say what is true now and point at the
-file instead of retelling how we got there.
+descriptions, READMEs and comments say what is true now and point at it.
 
-`~/.config/git/ignore` carves these back out of the `**/.claude/` exclusion on
-my machines. If `git check-ignore` says a decision file is ignored, that machine
-is missing the carve-out: say so rather than reaching for `git add -f`.
+If `git check-ignore` says a decision file is ignored, the machine is missing
+the `.claude/decisions/` carve-out: say so rather than `git add -f`.
 
 One file per topic, however many decisions the topic takes:
 
