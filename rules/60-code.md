@@ -29,5 +29,5 @@ through an `if` has coupled them to save a copy.
 Complexity is sometimes the answer. A cache, a queue, a state machine, another
 service: each earns its place when the requirement cannot be met without it. Say
 what it buys, in a number where there is one, and what the simple version fails
-to do, then record it in the repo's decision log. Complexity chosen that way is
-a decision. Complexity reached for first is a habit.
+to do. Complexity chosen that way is a decision. Complexity reached for first is
+a habit.
