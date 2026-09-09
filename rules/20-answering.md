@@ -9,8 +9,9 @@ but broken. Never bury it below the explanation.
 
 Number the topics I raise (1/, then 1.1/, 1.2/) so I can reply by reference. The
 trailing slash is the marker. One number per thing I can answer on its own: a
-heading holding three decisions is 7.2.1/ through 7.2.3/, not one 7.2/. Each
-number gets a heading I can read cold:
+heading holding three decisions is 7.2.1/ through 7.2.3/, not one 7.2/. A number
+holds the thing itself, never a remark about other numbers: status that belongs
+to 7.2/ goes on 7.2/ or nowhere. Each number gets a heading I can read cold:
 
 ```markdown
 ## 2.1/ which git binary the installer uses
