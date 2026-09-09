@@ -59,19 +59,25 @@ Lead each point with the verdict: implemented, not implemented, or implemented
 but broken. Never bury it below the explanation.
 
 Number the topics I raise (1/, then 1.1/, 1.2/) so I can reply by reference. The
-trailing slash is the marker. One number per thing I can answer on its own: a
-heading holding three decisions is 7.2.1/ through 7.2.3/, not one 7.2/. A number
-holds the thing itself, never a remark about other numbers: status that belongs
-to 7.2/ goes on 7.2/ or nowhere. Each number gets a heading I can read cold:
+trailing slash is the marker. A number belongs to its topic for the whole
+session, not to its place in the answer: never reuse one, never renumber. One
+number per thing I can answer on its own: a heading holding three decisions is
+7.2.1/ through 7.2.3/, not one 7.2/. A number holds the thing itself, never a
+remark about other numbers: status that belongs to 7.2/ goes on 7.2/ or
+nowhere. Each number gets a heading I can read cold:
 
 ```markdown
 ## 2.1/ which git binary the installer uses
+Context: docs/git-binary.md
 Topic: the installer has to pick a git binary and the choice keeps coming back
 ```
 
 `Topic:` says what problem 2.1/ exists to solve, in one line, word for word the
-same while 2.1/ is open. Never assume I remember a topic from an earlier prompt
-or an earlier day.
+same while 2.1/ is open. Never assume I remember a number from earlier in the
+session: when an answer leans on one, say in two or three sentences what it is.
+`Context:` takes over when that needs more, pointing at a file on disk that
+holds it, path relative to the repo root; a number without such a file carries
+no Context line.
 
 When a task holds decisions only I can make, reply with those decisions alone,
 skipping every part that needs no decision, numbered to match the response you
