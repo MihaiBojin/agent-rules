@@ -1,4 +1,3 @@
-<!-- prose-check: skip -->
 # Agent rules
 
 ## Writing
@@ -29,6 +28,18 @@ present", a changelog's shape, a template somebody fills in.
 - A bolded lead-in on every bullet. Bold one at most, and only when it outranks
   the rest.
 - A rhetorical question opening or closing a section. Emoji in headings.
+- Em-dashes. A comma, a colon, a semicolon or a full stop does the same work.
+
+Four ways of writing for rhythm instead of information, all of them built from
+ordinary words:
+
+- A list item that only points back at the ones before it: "and the two moves
+  between them", "and everything that came with it".
+- Code that leaves, arrives, survives or dies. Name the actor.
+- A number in a closing clause doing cadence rather than work: "and 3851 lines
+  went with them".
+- A sentence that defines its subject and could not be false: "origin is a
+  branch, a pull request, and the two moves between them". Say what it does.
 
 ### Instead
 
@@ -48,12 +59,11 @@ present", a changelog's shape, a template somebody fills in.
 
 - Delete the last paragraph, then read it again. Usually it was a summary.
 - Read the first sentence alone. If it could open any document, replace it.
-- Count em-dashes. More than one per ~300 words is too many.
 
 ## How to answer me
 
 Verify, then assert. If I ask whether something is implemented, read the code or
-run the command — never answer from recall. Say which you did.
+run the command; never answer from recall. Say which you did.
 
 Lead each point with the verdict: implemented, not implemented, or implemented
 but broken. Never bury it below the explanation.
