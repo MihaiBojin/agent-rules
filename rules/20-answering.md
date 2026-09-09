@@ -12,14 +12,12 @@ trailing slash is the marker. Each number gets a heading I can read cold:
 
 ```markdown
 ## 2.1/ which git binary the installer uses
-Context: .claude/decisions/1757238000-git-binary-choice.md
 Topic: the installer has to pick a git binary and the choice keeps coming back
 ```
 
 `Topic:` says what problem 2.1/ exists to solve, in one line, word for word the
-same while 2.1/ is open. `Context:` points at its decision file, path relative
-to the repo root; a topic without one carries no Context line. Never assume I
-remember a topic from an earlier prompt or an earlier day.
+same while 2.1/ is open. Never assume I remember a topic from an earlier prompt
+or an earlier day.
 
 When a task holds decisions only I can make, reply with those decisions alone,
 skipping every part that needs no decision, numbered to match the response you

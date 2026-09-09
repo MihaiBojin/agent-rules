@@ -63,14 +63,12 @@ trailing slash is the marker. Each number gets a heading I can read cold:
 
 ```markdown
 ## 2.1/ which git binary the installer uses
-Context: .claude/decisions/1757238000-git-binary-choice.md
 Topic: the installer has to pick a git binary and the choice keeps coming back
 ```
 
 `Topic:` says what problem 2.1/ exists to solve, in one line, word for word the
-same while 2.1/ is open. `Context:` points at its decision file, path relative
-to the repo root; a topic without one carries no Context line. Never assume I
-remember a topic from an earlier prompt or an earlier day.
+same while 2.1/ is open. Never assume I remember a topic from an earlier prompt
+or an earlier day.
 
 When a task holds decisions only I can make, reply with those decisions alone,
 skipping every part that needs no decision, numbered to match the response you
@@ -123,48 +121,6 @@ key: the author stays me, the committer becomes `GitHub <noreply@github.com>`,
 and the commit shows as Verified. Expected. Do not route around it, and do not
 offer to.
 
-## Decision log
-
-A decision that is not quick and easy gets a file:
-`.claude/decisions/<unix-timestamp>-<slug>.md`, committed with the work it
-belongs to. Ask for one at any point and I write it however small it looks.
-
-The file is the only place the history lives. Answers, commit bodies, PR
-descriptions, READMEs and code comments say what is true now and point at the
-file instead of retelling how we got there.
-
-`~/.config/git/ignore` carves these back out of the `**/.claude/` exclusion on
-my machines. If `git check-ignore` says a decision file is ignored, that machine
-is missing the carve-out: say so rather than reaching for `git add -f`.
-
-One file per topic, however many decisions the topic takes:
-
-```markdown
-# Which git binary the installer uses
-
-Topic: the installer has to pick a git binary and the choice keeps coming back
-Status: decided 2026-09-07
-Opened: 2026-09-07
-
-## 2026-09-07
-
-q: Which git should we use: system, brew, user specified
-a: use system git, cache the binary location for a day
-why: brew git moves with the machine, system git does not
-alt: git from $PATH on every call — 700ms of extra runtime
-alt: a configured path — one more thing to set per machine
-```
-
-`Topic:` is the line the answer heading carries, word for word, so the wording
-outlives the session. `Status:` reads `open` while any `q:` has no `a:`, and
-`decided <ISO date>` once none do. Entries append under the date they were
-written. `why:` is the reason that was argued, one line, left out when nobody
-gave one. `alt:` is one rejected option per line and what killed it: keep the
-number, drop the method. An option nobody weighed does not get a line.
-
-Nothing between entries. No paragraph explaining the one above it. Anything
-needing more than those four lines belongs in the code or its comment.
-
 ## Code and architecture
 
 Simple beats clever. The cost that matters is what the next reader has to hold
@@ -195,5 +151,5 @@ through an `if` has coupled them to save a copy.
 Complexity is sometimes the answer. A cache, a queue, a state machine, another
 service: each earns its place when the requirement cannot be met without it. Say
 what it buys, in a number where there is one, and what the simple version fails
-to do, then record it per rules/50-decisions.md. Complexity chosen that way is a
-decision. Complexity reached for first is a habit.
+to do. Complexity chosen that way is a decision. Complexity reached for first is
+a habit.
