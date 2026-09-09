@@ -39,7 +39,7 @@ say()  { printf '%s\n' "$*"; }
 note() { printf '%s\n' "$*" >&2; }
 head2(){ printf '\n%s\n' "$*"; }
 
-[ -d "$RULES_DIR" ] || { note "error: $RULES_DIR not found — run this from inside the repo"; exit 1; }
+[ -d "$RULES_DIR" ] || { note "error: $RULES_DIR not found; run this from inside the repo"; exit 1; }
 
 # ------------------------------------------------------------------- build
 
@@ -53,7 +53,7 @@ render() {
   done
 }
 
-# fresh — 0 when AGENTS.md already matches rules/
+# fresh: 0 when AGENTS.md already matches rules/
 fresh() {
   local t rc
   t="$(mktemp)"; render > "$t"
@@ -61,7 +61,7 @@ fresh() {
   rm -f "$t"; return $rc
 }
 
-# build — rewrite AGENTS.md when it drifts from rules/
+# build: rewrite AGENTS.md when it drifts from rules/
 build() {
   local t
   mkdir -p "$(dirname "$RULES")" 2>/dev/null || true
@@ -102,7 +102,7 @@ link() {
   fi
 }
 
-# block <dest> [full|ref|ptr] — replace/insert a managed block in a file that
+# block <dest> [full|ref|ptr]: replace/insert a managed block in a file that
 # already holds your own content, so a symlink would clobber it. Three payloads:
 #
 #   full  the rules verbatim. Stale until the next run. Nothing uses this now.
@@ -110,7 +110,7 @@ link() {
 #   ptr   an instruction telling the agent to open the file itself.
 #
 # ref and ptr both track the source live, so editing rules/*.md and rebuilding
-# is enough — no reinstall.
+# is enough. No reinstall.
 block() {
   local dest="$1" mode="${2:-full}" tmp new bak
   mkdir -p "$(dirname "$dest")" 2>/dev/null || true
@@ -128,7 +128,7 @@ block() {
   { cat "$tmp"
     [ -s "$tmp" ] && printf '\n'
     printf '%s\n' "$MARK_BEGIN"
-    printf '%s\n' "# Managed by agent-rules install.sh — edits here are overwritten."
+    printf '%s\n' "# Managed by agent-rules install.sh. Edits here are overwritten."
     printf '\n'
     if [ "$mode" = "ref" ]; then
       printf '@%s\n' "$RULES"
@@ -160,7 +160,7 @@ block() {
   rm -f "$tmp"
 }
 
-# codex_hook <config.toml> — managed TOML block registering the SessionStart
+# codex_hook <config.toml>: managed TOML block registering the SessionStart
 # hook. Codex injects the hook's output itself, so the rules cannot be skipped,
 # and the hook re-reads the file each session, so `build` is enough.
 codex_hook() {
@@ -178,7 +178,7 @@ codex_hook() {
   { cat "$tmp"
     [ -s "$tmp" ] && printf '\n'
     printf '%s\n' "$TOML_BEGIN"
-    printf '%s\n' "# Managed by agent-rules install.sh — edits here are overwritten."
+    printf '%s\n' "# Managed by agent-rules install.sh. Edits here are overwritten."
     printf '\n'
     printf '%s\n' "[[hooks.SessionStart]]"
     printf '\n'
@@ -202,11 +202,11 @@ codex_hook() {
   mv "$new" "$dest" && say "  written   $dest (SessionStart hook)" && CHANGED=1
   rm -f "$tmp"
   say  "              Codex prompts once in the TUI to trust this hook. Until you"
-  say  "              accept, it is skipped silently — the AGENTS.md pointer covers"
+  say  "              accept, it is skipped silently; the AGENTS.md pointer covers"
   say  "              that gap."
 }
 
-# link_rules <dir> — one symlink per rules/*.md, and drop any of ours whose
+# link_rules <dir>: one symlink per rules/*.md, and drop any of ours whose
 # source has since been deleted or renamed.
 link_rules() {
   local rdir="$1" f old tgt
@@ -249,10 +249,10 @@ unblock() {
   mv "$tmp" "$dest" && say "  cleaned   $dest (managed block removed)"; CHANGED=1
 }
 
-# want <dir> — act on a tool only if it looks installed, unless AGENT_RULES_ALL=1
+# want <dir>: act on a tool only if it looks installed, unless AGENT_RULES_ALL=1
 want() { [ "$FORCE_ALL" = "1" ] || [ -d "$1" ]; }
 
-# dir_state <dir> — how many of rules/*.md are linked into <dir>
+# dir_state <dir>: how many of rules/*.md are linked into <dir>
 dir_state() {
   local d="$1" f rp n=0 total=0
   for f in "$RULES_DIR"/*.md; do
@@ -293,7 +293,7 @@ do_global() {
     link_rules "$HOME/.claude/rules"
     unwire_settings "$HOME/.claude/settings.json" "$STALE_HOOK"
   else
-    say  " Claude Code  not detected (~/.claude missing) — AGENT_RULES_ALL=1 to force"
+    say  " Claude Code  not detected (~/.claude missing); AGENT_RULES_ALL=1 to force"
   fi
 
   if want "$HOME/.codex"; then
@@ -303,7 +303,7 @@ do_global() {
     codex_hook "$HOME/.codex/config.toml"
     block "$HOME/.codex/AGENTS.md" ptr
   else
-    say  " Codex        not detected (~/.codex missing) — AGENT_RULES_ALL=1 to force"
+    say  " Codex        not detected (~/.codex missing); AGENT_RULES_ALL=1 to force"
   fi
 
   if want "$HOME/.gemini"; then
@@ -312,7 +312,7 @@ do_global() {
     # a live reference rather than a copy. It never needs a refresh run.
     block "$HOME/.gemini/GEMINI.md" ref
   else
-    say  " Antigravity  not detected (~/.gemini missing) — AGENT_RULES_ALL=1 to force"
+    say  " Antigravity  not detected (~/.gemini missing); AGENT_RULES_ALL=1 to force"
   fi
 
 }
@@ -339,7 +339,7 @@ do_project() {
     link "$dir/AGENTS.md" "$RULES"
   else
     say "  kept      $dir/AGENTS.md (already has its own; not replaced)"
-    say  "              Codex has no import syntax — paste the rules in, or rely"
+    say  "              Codex has no import syntax; paste the rules in, or rely"
     say  "              on the global install"
   fi
 }
@@ -367,7 +367,7 @@ unwire_settings() {
     mv "$tmp" "$f" && say "  updated   $f (hook removed)"; CHANGED=1
   else
     rm -f "$tmp"
-    note "  FAILED    could not edit $f — is it valid JSON?"
+    note "  FAILED    could not edit $f. Is it valid JSON?"
   fi
 }
 
@@ -376,7 +376,7 @@ unwire_settings() {
 do_status() {
   dir="${1:-$PWD}"
   head2 "Rules source: $RULES_DIR"
-  if fresh; then say "generated/AGENTS.md:  current"; else say "generated/AGENTS.md:  STALE — run make build"; fi
+  if fresh; then say "generated/AGENTS.md:  current"; else say "generated/AGENTS.md:  STALE; run make build"; fi
 
   printf '\n%-46s %s\n' "PATH" "STATE"
   for p in \
@@ -421,7 +421,7 @@ do_uninstall() {
   unlink_rules "$dir/.agents/rules"
   unlink_ours "$dir/AGENTS.md"
   unwire_settings "$HOME/.claude/settings.json" "$STALE_HOOK"
-  say  "project settings.json hook entry left in place — remove it by hand if you want it gone"
+  say  "project settings.json hook entry left in place; remove it by hand if you want it gone"
   say  "backups (*.bak-*) are never deleted"
 }
 
@@ -439,7 +439,7 @@ uninstall	remove every link this installer made"
               --delimiter='\t' --prompt='agent-rules > ' \
               --header='enter to run, esc to cancel' | cut -f1)"
   else
-    say "fzf not found — falling back to a numbered prompt."
+    say "fzf not found; falling back to a numbered prompt."
     PS3="choose > "
     select pick in global project build status uninstall quit; do
       [ -n "${pick:-}" ] && break
