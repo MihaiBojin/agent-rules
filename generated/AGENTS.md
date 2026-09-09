@@ -58,22 +58,28 @@ run the command — never answer from recall. Say which you did.
 Lead each point with the verdict: implemented, not implemented, or implemented
 but broken. Never bury it below the explanation.
 
-Number the topics I raise (1/, then 1.1/, 1.2/) so I can reply by reference. The
+Number the topics I raise so I can reply by reference, flat: 1/, 2/, 3/. The
 trailing slash is the marker. A number belongs to its topic for the whole
 session, not to its place in the answer: never reuse one, never renumber. One
 number per thing I can answer on its own: a heading holding three decisions is
-7.2.1/ through 7.2.3/, not one 7.2/. A number holds the thing itself, never a
-remark about other numbers: status that belongs to 7.2/ goes on 7.2/ or
-nowhere. Each number gets a heading I can read cold:
+three numbers, not one. A number holds the thing itself, never a remark about
+other numbers: status that belongs to 7/ goes on 7/ or nowhere.
+
+A second level is for a real list inside one topic: four deletions under 5/ are
+5.1/ through 5.4/. Never open a list at a bare `1.`, which collides with topic
+1/. `+` or `+/` starting a line of mine, never one I pasted, takes the lowest
+number this session has not used; `5+` or `5+/` takes the next free child of 5/.
+
+Each number gets a heading I can read cold:
 
 ```markdown
-## 2.1/ which git binary the installer uses
+## 3/ which git binary the installer uses
 Context: docs/git-binary.md
 Topic: the installer has to pick a git binary and the choice keeps coming back
 ```
 
-`Topic:` says what problem 2.1/ exists to solve, in one line, word for word the
-same while 2.1/ is open. Never assume I remember a number from earlier in the
+`Topic:` says what problem 3/ exists to solve, in one line, word for word the
+same while 3/ is open. Never assume I remember a number from earlier in the
 session: when an answer leans on one, say in two or three sentences what it is.
 `Context:` takes over when that needs more, pointing at a file on disk that
 holds it, path relative to the repo root; a number without such a file carries
