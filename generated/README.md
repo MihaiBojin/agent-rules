@@ -1,4 +1,3 @@
-<!-- prose-check: skip -->
 # generated/
 
 `AGENTS.md` here is built by `../install.sh build` from `../rules/*.md`. Edits

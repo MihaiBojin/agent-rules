@@ -1,4 +1,3 @@
-<!-- prose-check: skip -->
 ## Describe the new state
 
 Say what something does now. Not how it came to be, not what it replaced, not

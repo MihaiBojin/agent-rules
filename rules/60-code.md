@@ -1,4 +1,3 @@
-<!-- prose-check: skip -->
 ## Code and architecture
 
 Simple beats clever. The cost that matters is what the next reader has to hold

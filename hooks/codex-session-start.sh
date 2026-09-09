@@ -2,7 +2,7 @@
 # Codex SessionStart hook: hand the ruleset to the model as additionalContext.
 #
 # Codex injects the returned text itself, so the model cannot skip it, and the
-# file is re-read on every session — `make build` propagates with no reinstall.
+# file is re-read on every session; `make build` propagates with no reinstall.
 #
 # Fails open on every unexpected condition. A hook that breaks session startup
 # is a hook you disable within a week.

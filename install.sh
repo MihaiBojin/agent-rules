@@ -3,7 +3,7 @@
 #
 #   ./install.sh                  interactive menu (fzf if present)
 #   ./install.sh global           user-level rules for every tool detected
-#   ./install.sh project [path]   per-repo rules + the prose hook (default: cwd)
+#   ./install.sh project [path]   per-repo rules for every tool (default: cwd)
 #   ./install.sh build            regenerate generated/AGENTS.md from rules/*.md
 #   ./install.sh status [path]    what is wired up right now
 #   ./install.sh uninstall [path] undo both scopes
@@ -21,9 +21,11 @@ set -uo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RULES_DIR="$REPO/rules"
 RULES="$REPO/generated/AGENTS.md"  # built from RULES_DIR; see generated/README.md
-HOOK_SRC="$REPO/hooks/check-prose.sh"
 CODEX_HOOK="$REPO/hooks/codex-session-start.sh"
-PAT_SRC="$REPO/hooks/prose-patterns.txt"
+# Migration: the PostToolUse prose hook this installer used to wire. Kept
+# only so an install that already has the entry drops it. Delete once every
+# machine has run this version.
+STALE_HOOK="$REPO/hooks/check-prose.sh"
 STAMP="$(date +%Y%m%d%H%M%S)"
 MARK_BEGIN="<!-- >>> agent-rules >>> -->"
 MARK_END="<!-- <<< agent-rules <<< -->"
@@ -37,23 +39,21 @@ say()  { printf '%s\n' "$*"; }
 note() { printf '%s\n' "$*" >&2; }
 head2(){ printf '\n%s\n' "$*"; }
 
-[ -d "$RULES_DIR" ] || { note "error: $RULES_DIR not found — run this from inside the repo"; exit 1; }
+[ -d "$RULES_DIR" ] || { note "error: $RULES_DIR not found; run this from inside the repo"; exit 1; }
 
 # ------------------------------------------------------------------- build
 
-# render — AGENTS.md on stdout: one header, then every rules/*.md in order.
-# The per-source skip markers are dropped so the generated file carries one.
+# render: AGENTS.md on stdout, one header then every rules/*.md in order.
 render() {
   local f
-  printf '%s\n' "<!-- prose-check: skip -->"
   printf '%s\n' "# Agent rules"
   for f in "$RULES_DIR"/*.md; do
     printf '\n'
-    grep -v '^<!-- prose-check: skip -->$' "$f"
+    cat "$f"
   done
 }
 
-# fresh — 0 when AGENTS.md already matches rules/
+# fresh: 0 when AGENTS.md already matches rules/
 fresh() {
   local t rc
   t="$(mktemp)"; render > "$t"
@@ -61,7 +61,7 @@ fresh() {
   rm -f "$t"; return $rc
 }
 
-# build — rewrite AGENTS.md when it drifts from rules/
+# build: rewrite AGENTS.md when it drifts from rules/
 build() {
   local t
   mkdir -p "$(dirname "$RULES")" 2>/dev/null || true
@@ -102,7 +102,7 @@ link() {
   fi
 }
 
-# block <dest> [full|ref|ptr] — replace/insert a managed block in a file that
+# block <dest> [full|ref|ptr]: replace/insert a managed block in a file that
 # already holds your own content, so a symlink would clobber it. Three payloads:
 #
 #   full  the rules verbatim. Stale until the next run. Nothing uses this now.
@@ -110,7 +110,7 @@ link() {
 #   ptr   an instruction telling the agent to open the file itself.
 #
 # ref and ptr both track the source live, so editing rules/*.md and rebuilding
-# is enough — no reinstall.
+# is enough. No reinstall.
 block() {
   local dest="$1" mode="${2:-full}" tmp new bak
   mkdir -p "$(dirname "$dest")" 2>/dev/null || true
@@ -128,7 +128,7 @@ block() {
   { cat "$tmp"
     [ -s "$tmp" ] && printf '\n'
     printf '%s\n' "$MARK_BEGIN"
-    printf '%s\n' "# Managed by agent-rules install.sh — edits here are overwritten."
+    printf '%s\n' "# Managed by agent-rules install.sh. Edits here are overwritten."
     printf '\n'
     if [ "$mode" = "ref" ]; then
       printf '@%s\n' "$RULES"
@@ -137,9 +137,9 @@ block() {
       printf '%s\n' "Read this file at the start of every task and follow it:"
       printf '%s\n' "$RULES"
       printf '\n'
-      printf '%s\n' "It covers prose written for humans — commit messages, PR bodies, code"
-      printf '%s\n' "comments, docs, chat replies — plus how to answer and how to treat git"
-      printf '%s\n' "history. Read it before writing any of those."
+      printf '%s\n' "It covers prose written for humans: commit messages, PR bodies,"
+      printf '%s\n' "code comments, docs and chat replies, plus how to answer and how"
+      printf '%s\n' "to treat git history. Read it before writing any of those."
     else
       printf '%s\n' "# Source: $RULES"
       printf '\n'
@@ -160,7 +160,7 @@ block() {
   rm -f "$tmp"
 }
 
-# codex_hook <config.toml> — managed TOML block registering the SessionStart
+# codex_hook <config.toml>: managed TOML block registering the SessionStart
 # hook. Codex injects the hook's output itself, so the rules cannot be skipped,
 # and the hook re-reads the file each session, so `build` is enough.
 codex_hook() {
@@ -178,7 +178,7 @@ codex_hook() {
   { cat "$tmp"
     [ -s "$tmp" ] && printf '\n'
     printf '%s\n' "$TOML_BEGIN"
-    printf '%s\n' "# Managed by agent-rules install.sh — edits here are overwritten."
+    printf '%s\n' "# Managed by agent-rules install.sh. Edits here are overwritten."
     printf '\n'
     printf '%s\n' "[[hooks.SessionStart]]"
     printf '\n'
@@ -202,11 +202,11 @@ codex_hook() {
   mv "$new" "$dest" && say "  written   $dest (SessionStart hook)" && CHANGED=1
   rm -f "$tmp"
   say  "              Codex prompts once in the TUI to trust this hook. Until you"
-  say  "              accept, it is skipped silently — the AGENTS.md pointer covers"
+  say  "              accept, it is skipped silently; the AGENTS.md pointer covers"
   say  "              that gap."
 }
 
-# link_rules <dir> — one symlink per rules/*.md, and drop any of ours whose
+# link_rules <dir>: one symlink per rules/*.md, and drop any of ours whose
 # source has since been deleted or renamed.
 link_rules() {
   local rdir="$1" f old tgt
@@ -249,10 +249,10 @@ unblock() {
   mv "$tmp" "$dest" && say "  cleaned   $dest (managed block removed)"; CHANGED=1
 }
 
-# want <dir> — act on a tool only if it looks installed, unless AGENT_RULES_ALL=1
+# want <dir>: act on a tool only if it looks installed, unless AGENT_RULES_ALL=1
 want() { [ "$FORCE_ALL" = "1" ] || [ -d "$1" ]; }
 
-# dir_state <dir> — how many of rules/*.md are linked into <dir>
+# dir_state <dir>: how many of rules/*.md are linked into <dir>
 dir_state() {
   local d="$1" f rp n=0 total=0
   for f in "$RULES_DIR"/*.md; do
@@ -291,13 +291,9 @@ do_global() {
   if want "$HOME/.claude"; then
     say " Claude Code"
     link_rules "$HOME/.claude/rules"
-    # Absolute path into this repo rather than $CLAUDE_PROJECT_DIR: the global
-    # entry has to resolve in repos that were never wired per-project.
-    # Comes out when the prose check ships as a plugin hook instead:
-    # https://github.com/MihaiBojin/agent-plugins/issues/12
-    wire_settings "$HOME/.claude/settings.json" "$HOOK_SRC"
+    unwire_settings "$HOME/.claude/settings.json" "$STALE_HOOK"
   else
-    say  " Claude Code  not detected (~/.claude missing) — AGENT_RULES_ALL=1 to force"
+    say  " Claude Code  not detected (~/.claude missing); AGENT_RULES_ALL=1 to force"
   fi
 
   if want "$HOME/.codex"; then
@@ -307,7 +303,7 @@ do_global() {
     codex_hook "$HOME/.codex/config.toml"
     block "$HOME/.codex/AGENTS.md" ptr
   else
-    say  " Codex        not detected (~/.codex missing) — AGENT_RULES_ALL=1 to force"
+    say  " Codex        not detected (~/.codex missing); AGENT_RULES_ALL=1 to force"
   fi
 
   if want "$HOME/.gemini"; then
@@ -316,7 +312,7 @@ do_global() {
     # a live reference rather than a copy. It never needs a refresh run.
     block "$HOME/.gemini/GEMINI.md" ref
   else
-    say  " Antigravity  not detected (~/.gemini missing) — AGENT_RULES_ALL=1 to force"
+    say  " Antigravity  not detected (~/.gemini missing); AGENT_RULES_ALL=1 to force"
   fi
 
 }
@@ -333,9 +329,6 @@ do_project() {
 
   say " Claude Code"
   link_rules "$dir/.claude/rules"
-  link "$dir/.claude/hooks/check-prose.sh" "$HOOK_SRC"
-  link "$dir/.claude/hooks/prose-patterns.txt" "$PAT_SRC"
-  wire_settings "$dir/.claude/settings.json" '$CLAUDE_PROJECT_DIR/.claude/hooks/check-prose.sh'
 
   say " Antigravity"
   link_rules "$dir/.agents/rules"
@@ -346,44 +339,8 @@ do_project() {
     link "$dir/AGENTS.md" "$RULES"
   else
     say "  kept      $dir/AGENTS.md (already has its own; not replaced)"
-    say  "              Codex has no import syntax — paste the rules in, or rely"
+    say  "              Codex has no import syntax; paste the rules in, or rely"
     say  "              on the global install"
-  fi
-}
-
-wire_settings() {
-  f="$1"
-  cmd="$2"
-  if ! command -v jq >/dev/null 2>&1; then
-    note "  manual    jq not found; add this to $f yourself:"
-    note "            PostToolUse matcher \"Write|Edit\" -> command $cmd"
-    return 0
-  fi
-  had_file=1
-  [ -f "$f" ] || { had_file=0; printf '{}\n' > "$f"; }
-  if jq -e --arg c "$cmd" '
-        [ .hooks.PostToolUse[]?.hooks[]?.command ] | index($c) != null
-      ' "$f" >/dev/null 2>&1; then
-    say "  ok        $f (hook already wired)"
-    return 0
-  fi
-  tmp="$(mktemp)"
-  if jq --arg c "$cmd" '
-        .hooks //= {} |
-        .hooks.PostToolUse //= [] |
-        .hooks.PostToolUse += [{
-          matcher: "Write|Edit",
-          hooks: [{ type: "command", command: $c, timeout: 10 }]
-        }]
-      ' "$f" > "$tmp" 2>/dev/null; then
-    if [ "$had_file" = "1" ]; then
-      bak="$f.bak-$STAMP"
-      cp "$f" "$bak" && note "  backup    $f -> $bak"
-    fi
-    mv "$tmp" "$f" && say "  updated   $f (hook wired)"; CHANGED=1
-  else
-    rm -f "$tmp"
-    note "  FAILED    could not edit $f — is it valid JSON?"
   fi
 }
 
@@ -410,7 +367,7 @@ unwire_settings() {
     mv "$tmp" "$f" && say "  updated   $f (hook removed)"; CHANGED=1
   else
     rm -f "$tmp"
-    note "  FAILED    could not edit $f — is it valid JSON?"
+    note "  FAILED    could not edit $f. Is it valid JSON?"
   fi
 }
 
@@ -419,7 +376,7 @@ unwire_settings() {
 do_status() {
   dir="${1:-$PWD}"
   head2 "Rules source: $RULES_DIR"
-  if fresh; then say "generated/AGENTS.md:  current"; else say "generated/AGENTS.md:  STALE — run make build"; fi
+  if fresh; then say "generated/AGENTS.md:  current"; else say "generated/AGENTS.md:  STALE; run make build"; fi
 
   printf '\n%-46s %s\n' "PATH" "STATE"
   for p in \
@@ -433,18 +390,11 @@ do_status() {
   for p in \
     "$HOME/.codex/AGENTS.md" \
     "$HOME/.gemini/GEMINI.md" \
-    "$dir/.claude/hooks/check-prose.sh" \
     "$dir/AGENTS.md"
   do
     short="$(printf '%s' "$p" | sed "s|^$HOME/|~/|")"
     printf '%-46s %s\n' "$short" "$(state "$p")"
   done
-  short="$(printf '%s' "$HOME/.claude/settings.json" | sed "s|^$HOME/|~/|")"
-  if [ -f "$HOME/.claude/settings.json" ] && grep -qF "$HOOK_SRC" "$HOME/.claude/settings.json" 2>/dev/null; then
-    printf '%-46s %s\n' "$short" "hook"
-  else
-    printf '%-46s %s\n' "$short" "-"
-  fi
   short="$(printf '%s' "$HOME/.codex/config.toml" | sed "s|^$HOME/|~/|")"
   if [ -f "$HOME/.codex/config.toml" ] && grep -qF "$TOML_BEGIN" "$HOME/.codex/config.toml" 2>/dev/null; then
     printf '%-46s %s\n' "$short" "hook"
@@ -470,8 +420,8 @@ do_uninstall() {
   unlink_ours "$dir/.claude/hooks/prose-patterns.txt"
   unlink_rules "$dir/.agents/rules"
   unlink_ours "$dir/AGENTS.md"
-  unwire_settings "$HOME/.claude/settings.json" "$HOOK_SRC"
-  say  "project settings.json hook entry left in place — remove it by hand if you want it gone"
+  unwire_settings "$HOME/.claude/settings.json" "$STALE_HOOK"
+  say  "project settings.json hook entry left in place; remove it by hand if you want it gone"
   say  "backups (*.bak-*) are never deleted"
 }
 
@@ -479,7 +429,7 @@ do_uninstall() {
 
 menu() {
   opts="global	wire user-level rules for every tool detected
-project	wire this repo: rules for all four tools + the prose hook
+project	wire this repo: rules for all four tools
 build	regenerate generated/AGENTS.md from rules/*.md
 status	show what is wired up right now
 uninstall	remove every link this installer made"
@@ -489,7 +439,7 @@ uninstall	remove every link this installer made"
               --delimiter='\t' --prompt='agent-rules > ' \
               --header='enter to run, esc to cancel' | cut -f1)"
   else
-    say "fzf not found — falling back to a numbered prompt."
+    say "fzf not found; falling back to a numbered prompt."
     PS3="choose > "
     select pick in global project build status uninstall quit; do
       [ -n "${pick:-}" ] && break

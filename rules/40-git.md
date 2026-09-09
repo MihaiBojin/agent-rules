@@ -1,4 +1,3 @@
-<!-- prose-check: skip -->
 ## Git history
 
 Branch before committing if I am on the default branch. Commit and push only

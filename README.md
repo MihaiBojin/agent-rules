@@ -53,9 +53,7 @@ claim about the code comes with the command that produced it.
 | `generated/README.md` | Says the above to anyone who opens the directory. |
 | `install.sh` | Wires the rules into each tool's expected location. |
 | `Makefile` | Thin wrapper over `install.sh`. |
-| `hooks/check-prose.sh` | Claude Code `PostToolUse` hook. Greps written markdown and hands violations back. |
 | `hooks/codex-session-start.sh` | Codex `SessionStart` hook. Returns the ruleset as `additionalContext`. |
-| `hooks/prose-patterns.txt` | The grep patterns. Edit alongside `rules/10-writing.md`. |
 
 ## Install
 
@@ -74,8 +72,8 @@ matters. Move the repo later and you re-run `make install`.
 | Command | What it does |
 |---|---|
 | `make build` | Regenerate `generated/AGENTS.md` from `rules/*.md` |
-| `make install` | User-level wiring plus the prose hook, every tool it detects |
-| `make project` | Per-repo wiring plus the prose hook. `DIR=/path` targets another repo |
+| `make install` | User-level wiring, every tool it detects |
+| `make project` | Per-repo wiring. `DIR=/path` targets another repo |
 | `make status` | What is wired up right now |
 | `make uninstall` | Undo both scopes |
 
@@ -152,49 +150,6 @@ leaves 3.9x headroom. The individual `rules/*.md` run 526 bytes to 2,951.
 `.github/workflows/size.yml` fails a pull request that pushes the artifact
 past 200 lines.
 
-## The prose hook
-
-Rules are context, not enforcement, and adherence drifts over a long session.
-The prose hook is the backstop: it runs on every write, greps the file, and
-exits 2 so Claude sees its own violations and fixes them.
-
-`install.sh global` adds the `PostToolUse` entry to `~/.claude/settings.json`
-pointing at `hooks/check-prose.sh` in this repo by absolute path, so it fires in
-every repo whether or not that repo was wired. `install.sh project` links the
-script into `.claude/hooks/` and adds an entry to `.claude/settings.json` that
-goes through `$CLAUDE_PROJECT_DIR`, so the repo carries its own copy for anyone
-who clones it. Both skip the edit when it's already there, and both need `jq`;
-without it you get the snippet on stderr and add it yourself.
-
-Wiring both scopes in the same repo runs the check twice on each write. The
-second run reports the same lines, so the cost is duplicated stderr.
-
-`install.sh uninstall` drops the global entry, since it points into this repo
-and nothing else can claim it. The project entry is left alone, because it may
-be committed and shared.
-
-It only reads `.md`, `.markdown`, and `.txt`. Fenced code blocks are blanked
-before checking, so line numbers in the output match the real file.
-
-A file whose first ten lines contain `<!-- prose-check: skip -->` is left alone.
-Every `rules/*.md` carries that marker, since between them they quote every
-phrase they ban. `build` strips the per-file markers and puts one at the top of
-`generated/AGENTS.md`.
-
-## What the prose hook can't catch
-
-Grep finds vocabulary and two or three fixed constructions. It's blind to the
-things that most make writing sound generated:
-
-- Rule-of-three lists
-- A closing paragraph that summarizes the one above it
-- Bolded lead-ins on every bullet
-- Sentences that all run the same length
-
-The hook prints a reminder about these, but catching them needs a reader. If the
-reminder stops working, the next step is a cheap-model pass over changed
-markdown rather than a longer regex.
-
 ## Editing the rules
 
 Edit `rules/*.md`, then `make build`. `make install` and `make project` build
@@ -215,12 +170,9 @@ the artifact lives in `generated/`.
 Keep the concatenation under ~200 lines, the point where Claude Code's own
 adherence drops off. Every line costs context in every session.
 
-Two habits worth keeping:
-
-- Write rules concrete enough to check. "Count the items" beats "avoid formulaic
-  lists."
-- When you add a vocabulary ban, add the pattern to `prose-patterns.txt` in the
-  same commit.
+Write rules concrete enough to check. "Count the items" beats "avoid
+formulaic lists", and a banned construction with an example beside it beats a
+principle.
 
 Before trusting a change, take a few files an agent wrote before it and
 regenerate them with the rules loaded. Diff, and count tells in both. If the
