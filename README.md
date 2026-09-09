@@ -115,6 +115,8 @@ Each tool caps how much instruction text it will load:
 
 `generated/AGENTS.md` is 7,668 bytes across 157 lines, so the tightest of these
 leaves 4.3x headroom. The individual `rules/*.md` run 526 bytes to 2,405.
+`.github/workflows/size.yml` fails a pull request that pushes the artifact
+past 200 lines.
 
 ## The prose hook
 

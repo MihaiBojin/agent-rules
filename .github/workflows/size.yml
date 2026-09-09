@@ -1,0 +1,20 @@
+name: size
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lines:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: generated/AGENTS.md stays under 200 lines
+        run: |
+          lines=$(wc -l < generated/AGENTS.md)
+          echo "generated/AGENTS.md: $lines lines"
+          if [ "$lines" -gt 200 ]; then
+            echo "::error file=generated/AGENTS.md::$lines lines, over the 200-line budget"
+            exit 1
+          fi
