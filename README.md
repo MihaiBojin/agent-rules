@@ -9,6 +9,41 @@ writing code.
 files in front of Claude Code, Codex, and Antigravity without keeping a separate
 copy for each.
 
+## What a session looks like with them on
+
+`rules/20-answering.md` changes the shape of every reply, so it is the one you
+notice from the first message. An agent numbers the topics you raise and marks
+each number with a trailing slash: 1/, 2/, 3/, flat. Each gets a heading, a
+`Topic:` line saying what problem the number exists to solve, and a `Context:`
+line pointing at a file when the background needs more than a sentence. The
+number stays with its topic for the whole session, never reused and never
+renumbered, and it is carried into later turns until you answer it or it stops
+applying. Answer with "3/ yes, drop it" and there is no ambiguity about what
+you dropped.
+
+A second level shows up only for a real list inside one topic. Four deletions
+under 5/ are 5.1/ through 5.4/. That is also why no list in an answer opens at a
+bare `1.`, which would collide with topic 1/.
+
+You open a topic yourself with a `+`:
+
+| You type | You get |
+|---|---|
+| `+ can we cache this?` | a new topic at the lowest number the session has not used |
+| `+/ can we cache this?` | the same, if the slash is already in your fingers |
+| `5+ what about the tests?` | the next free child of 5/, so 5.3/ once 5.1/ and 5.2/ exist |
+| `5+/ what about the tests?` | the same |
+
+Lowest unused, not one past the highest, so a number you dropped stays dropped
+instead of coming back attached to something else. A `+` inside text you paste
+is not a marker, which keeps a diff hunk from reading as forty new topics.
+
+The rest of that file governs the answer around the numbers. Settled things come
+first and the ones needing your decision come last, with nothing after them.
+When a task holds decisions only you can make, the reply holds those decisions
+alone, numbered to match the full answer that follows once you have chosen. A
+claim about the code comes with the command that produced it.
+
 ## Files
 
 | Path | What it is |
@@ -77,9 +112,9 @@ Four things the installer handles that aren't obvious from that table.
 
 **Nothing holds a copy of the rules.** Claude Code follows symlinks. Antigravity
 resolves `@/absolute/path` against the filesystem. Codex runs a hook that reads
-the file at session start. Each of them picks up whatever the file says at the
-time, which is why editing a rule needs `make build` and nothing else. No
-reinstall, no second machine to remember.
+the file at session start. Each of them picks up whatever the file says when a
+session starts, which is why editing a rule needs `make build` and nothing
+else. No reinstall, no second machine to remember.
 
 **Codex gets a belt and braces.** The hook is the guarantee: Codex injects the
 hook's output itself, so the model cannot skip it. But a hook stays untrusted
@@ -112,8 +147,8 @@ Each tool caps how much instruction text it will load:
 | Codex | 32,768 bytes for project docs (`project_doc_max_bytes`), and the same again for the hook's `additionalContextLimit` |
 | Claude Code | 4 MiB, but adherence drops past ~200 lines |
 
-`generated/AGENTS.md` is 8,063 bytes across 164 lines, so the tightest of these
-leaves 4.1x headroom. The individual `rules/*.md` run 526 bytes to 2,658.
+`generated/AGENTS.md` is 8,356 bytes across 170 lines, so the tightest of these
+leaves 3.9x headroom. The individual `rules/*.md` run 526 bytes to 2,951.
 `.github/workflows/size.yml` fails a pull request that pushes the artifact
 past 200 lines.
 
@@ -166,6 +201,12 @@ Edit `rules/*.md`, then `make build`. `make install` and `make project` build
 first anyway, and `make status` prints `STALE` when the artifact and the sources
 disagree. Nothing reads the artifact as a source, so an edit made there is lost
 on the next build.
+
+The edit reaches your next session, not the one you are sitting in. Claude Code
+attaches the rules to the first message of a session and replays that attachment
+when you resume, so a session opened on Monday still answers by Monday's rules
+on Thursday, however many times you rebuild. Start a fresh session after
+changing a rule you want to see honored.
 
 This repo carries no root `AGENTS.md` or `CLAUDE.md` on purpose. Either one
 would load as guidance for agents working on the repo itself, which is also why
