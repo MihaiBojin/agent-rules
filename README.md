@@ -1,9 +1,9 @@
 # agent-rules
 
 Rules for coding agents, kept in one place and referenced from projects instead
-of copy-pasted. Six of them: how to write prose for humans, how to answer me,
-how to describe a change, how to treat git history, where decisions get
-recorded, and how much to build when writing code.
+of copy-pasted. Five of them: how to write prose for humans, how to answer me,
+how to describe a change, how to treat git history, and how much to build when
+writing code.
 
 `rules/*.md` holds them, one file per rule. Everything else exists to get those
 files in front of Claude Code, Codex, and Antigravity without keeping a separate
@@ -55,22 +55,11 @@ nothing is reported. Anything else in the way is moved to
 
 ## Decision files
 
-`rules/50-decisions.md` puts one file per non-trivial decision in
-`.claude/decisions/`, named `<unix-timestamp>-<slug>`. `~/.config/git/ignore`
-excludes `**/.claude/` and carves those back out, which covers every repo
-without a per-repo `.gitignore`:
-
-```gitignore
-## Claude
-!**/.claude/
-**/.claude/*
-!**/.claude/decisions/
-```
-
-Order matters. Git will not re-include a path whose parent directory is
-excluded, so `.claude/` has to come back before `.claude/decisions/` can. That
-file is machine-local and tracked nowhere, so a machine without those lines
-cannot commit a decision file.
+The decision log is the `decisions` plugin in
+[MihaiBojin/agent-plugins](https://github.com/MihaiBojin/agent-plugins): one
+file per topic in `.decisions/` at the repo root, on where that directory
+exists. `rules/20-answering.md` points a numbered topic at its file through a
+`Context:` line, and carries no rule about writing one.
 
 ## Where the rules land
 
@@ -124,8 +113,8 @@ Each tool caps how much instruction text it will load:
 | Codex | 32,768 bytes for project docs (`project_doc_max_bytes`), and the same again for the hook's `additionalContextLimit` |
 | Claude Code | 4 MiB, but adherence drops past ~200 lines |
 
-`generated/AGENTS.md` is 9,480 bytes across 199 lines, so the tightest of these
-leaves 3.4x headroom. The individual `rules/*.md` run 526 bytes to 2,405.
+`generated/AGENTS.md` is 7,668 bytes across 157 lines, so the tightest of these
+leaves 4.3x headroom. The individual `rules/*.md` run 526 bytes to 2,405.
 
 ## The prose hook
 

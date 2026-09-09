@@ -12,7 +12,7 @@ trailing slash is the marker. Each number gets a heading I can read cold:
 
 ```markdown
 ## 2.1/ which git binary the installer uses
-Context: .claude/decisions/1757238000-git-binary-choice.md
+Context: .decisions/1757238000-git-binary-choice.md
 Topic: the installer has to pick a git binary and the choice keeps coming back
 ```
 
