@@ -112,8 +112,8 @@ Each tool caps how much instruction text it will load:
 | Codex | 32,768 bytes for project docs (`project_doc_max_bytes`), and the same again for the hook's `additionalContextLimit` |
 | Claude Code | 4 MiB, but adherence drops past ~200 lines |
 
-`generated/AGENTS.md` is 7,456 bytes across 155 lines, so the tightest of these
-leaves 4.4x headroom. The individual `rules/*.md` run 526 bytes to 2,405.
+`generated/AGENTS.md` is 8,063 bytes across 164 lines, so the tightest of these
+leaves 4.1x headroom. The individual `rules/*.md` run 526 bytes to 2,658.
 `.github/workflows/size.yml` fails a pull request that pushes the artifact
 past 200 lines.
 
