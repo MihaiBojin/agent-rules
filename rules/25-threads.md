@@ -5,6 +5,10 @@ the thread and not to its place in the answer: never reuse one, never renumber. 
 three threads, and status belonging to 7/ goes on 7/ or nowhere. A second level is for a real list inside one thread, so
 four deletions under 5/ are 5.1/ through 5.4/, and no list in an answer opens at a bare `1.`.
 
+Number anything I have to decide, whether I raised it or you turned it up. A choice you made on my behalf is one, and so
+is a problem you found on the way to something else. Open it at the lowest unused number and leave it open until I
+answer.
+
 Markers, at the start of a line I typed and never one I pasted:
 
 | I type | it means |
@@ -16,10 +20,15 @@ Markers, at the start of a line I typed and never one I pasted:
 | `3.2/$` | close 3.2/ and leave 3/ open |
 | `=/` | list every open thread and do nothing else |
 
+A skill or a command decides how its own output reads. It does not suspend the numbering: whatever it leaves me to
+decide is a thread, opened in the same answer.
+
 One heading line per thread, saying what is unsettled rather than the area it belongs to, word for word the same while
-the thread is open. A `---` sits above it with a blank line either side, drawn by the renderer at the full width of the
-terminal. `Context:` under it names a file holding background too big for a heading, path relative to the repo root, and
-is absent when there is none.
+the thread is open. It changes when the thread narrows or the heading turns out wrong. That answer alone carries the old
+line under it, number and all: `Replaces: 3/ whether the marketplace is still accurate`, above any `Context:` line. A
+`---` sits above it with a blank line either side, drawn by the renderer at the full width of the terminal. `Context:`
+under it names a file holding background too big for a heading, path relative to the repo root, and is absent when there
+is none.
 
 ```markdown
 ---
