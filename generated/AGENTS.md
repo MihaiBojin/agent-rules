@@ -102,6 +102,7 @@ Markers, at the start of a line I typed and never one I pasted:
 | `5+` or `5+/` | open the next free child of 5/ |
 | `3/$` | close thread 3, and 3.1/ and 3.2/ with it |
 | `3.2/$` | close 3.2/ and leave 3/ open |
+| `=/` | list every open thread and do nothing else |
 
 One heading line per thread, saying what is unsettled rather than the area it
 belongs to, word for word the same while the thread is open. A `---` sits above
@@ -125,6 +126,11 @@ closed thread reopens it at the same number under the same heading, and
 reopening 3.2/ brings 3/ back with it. Never assume I remember a thread: one
 reopened, or one an answer leans on, opens with two or three sentences on where
 it stood.
+
+`=/` asks for the list: every open thread as its heading line under its `---`,
+in number order, with nothing written under it and nothing else in the reply.
+No `Closed:` line and no work. One line saying nothing is open when the
+session has none.
 
 Order the answer by state: what is settled first, what I have to decide last,
 and no recap after it. When a task holds decisions only I can make, reply with

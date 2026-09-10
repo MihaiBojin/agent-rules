@@ -40,6 +40,7 @@ At the start of a line you type, never inside text you paste:
 | `5+ what about the tests?` | the next free child of 5/, so 5.3/ once 5.1/ and 5.2/ exist |
 | `5+/ what about the tests?` | the same |
 | `3/$` | thread 3 closed, named once as `Closed: 3/` and never raised again |
+| `=/` | every open thread listed by its heading, nothing else in the reply |
 
 Lowest unused, not one past the highest, so a number you dropped stays dropped
 instead of coming back attached to something else. A reopened thread returns at
