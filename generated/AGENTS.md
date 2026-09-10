@@ -68,46 +68,6 @@ run the command; never answer from recall. Say which you did.
 Lead each point with the verdict: implemented, not implemented, or implemented
 but broken. Never bury it below the explanation.
 
-Number the topics I raise so I can reply by reference, flat: 1/, 2/, 3/. The
-trailing slash is the marker. A number belongs to its topic for the whole
-session, not to its place in the answer: never reuse one, never renumber. One
-number per thing I can answer on its own: a heading holding three decisions is
-three numbers, not one. A number holds the thing itself, never a remark about
-other numbers: status that belongs to 7/ goes on 7/ or nowhere.
-
-A second level is for a real list inside one topic: four deletions under 5/ are
-5.1/ through 5.4/. Never open a list at a bare `1.`, which collides with topic
-1/. `+` or `+/` starting a line of mine, never one I pasted, takes the lowest
-number this session has not used; `5+` or `5+/` takes the next free child of 5/.
-
-Each number gets a heading I can read cold, under a `---` with a blank line
-either side. The renderer draws that rule the full width of the terminal.
-
-```markdown
----
-
-## 3/ which git binary the installer uses
-Context: docs/git-binary.md
-Topic: the installer has to pick a git binary and the choice keeps coming back
-```
-
-`Topic:` says what problem 3/ exists to solve, in one line, word for word the
-same while 3/ is open. Never assume I remember a number from earlier in the
-session: when an answer leans on one, say in two or three sentences what it is.
-`Context:` takes over when that needs more, pointing at a file on disk that
-holds it, path relative to the repo root; a number without such a file carries
-no Context line.
-
-When a task holds decisions only I can make, reply with those decisions alone,
-skipping every part that needs no decision, numbered to match the response you
-deliver once I have answered.
-
-Order the answer by state: what is settled first, what I have to decide last,
-and no recap after it. Carry those numbers across turns until I answer them or
-they stop applying, and say when you drop one and why. A point I answered partly
-stays open with the remainder narrowed. When nothing is open,
-the answer stops at the last real point.
-
 Recommend one option, with the reason in a clause. Do not survey alternatives I
 did not ask for.
 
@@ -123,6 +83,53 @@ Keep facts and proposals in separate sections: what is, then what you would do.
 
 Short declarative sentences. No preamble, no restating my question, no closing
 summary, and no adjective doing work a number could do.
+
+## Threads
+
+A thread is one thing I can answer on its own, numbered flat with a trailing
+slash: 1/, 2/, 3/. The number belongs to the thread and not to its place in the
+answer: never reuse one, never renumber. A heading holding three decisions is
+three threads, and status belonging to 7/ goes on 7/ or nowhere. A second level
+is for a real list inside one thread, so four deletions under 5/ are 5.1/
+through 5.4/, and no list in an answer opens at a bare `1.`.
+
+Markers, at the start of a line I typed and never one I pasted:
+
+| I type | it means |
+| --- | --- |
+| `3/` | answer thread 3, reopening it if it was closed |
+| `+` or `+/` | open a thread at the lowest unused number, not one past the highest |
+| `5+` or `5+/` | open the next free child of 5/ |
+| `3/$` | close thread 3, and 3.1/ and 3.2/ with it |
+| `3.2/$` | close 3.2/ and leave 3/ open |
+
+One heading line per thread, saying what is unsettled rather than the area it
+belongs to, word for word the same while the thread is open. A `---` sits above
+it with a blank line either side, drawn by the renderer at the full width of the
+terminal. `Context:` under it names a file holding background too big for a
+heading, path relative to the repo root, and is absent when there is none.
+
+```markdown
+---
+
+## 3/ whether the marketplace still describes anything that exists at HEAD
+```
+
+An open thread appears in every answer until I answer it or it stops applying.
+One I answered partly stays open with the remainder narrowed. Drop one that
+stopped applying, and say which and why. `3/$` closes a thread and needs no
+reason from you, because I closed it. A closed thread gets no heading and no
+mention afterwards, and its number stays spent. Name what closed this turn on
+one line at the top of the answer, `Closed: 3/, 4/`, and never again. `3/` on a
+closed thread reopens it at the same number under the same heading, and
+reopening 3.2/ brings 3/ back with it. Never assume I remember a thread: one
+reopened, or one an answer leans on, opens with two or three sentences on where
+it stood.
+
+Order the answer by state: what is settled first, what I have to decide last,
+and no recap after it. When a task holds decisions only I can make, reply with
+those decisions alone, numbered to match the answer you deliver once I have
+chosen. When nothing is open, the answer stops at the last real thread.
 
 ## Describe the new state
 
