@@ -84,9 +84,6 @@ Keep facts and proposals in separate sections: what is, then what you would do.
 Short declarative sentences. No preamble, no restating my question, no closing
 summary, and no adjective doing work a number could do.
 
-Answers are built from threads, the numbered sections I reply to by reference.
-`rules/25-threads.md` holds them.
-
 ## Threads
 
 A thread is one thing I can answer on its own, numbered flat with a trailing
