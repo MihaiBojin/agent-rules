@@ -134,12 +134,14 @@ block() {
       printf '@%s\n' "$RULES"
     elif [ "$mode" = "ptr" ]; then
       printf '%s\n' "## Rules"
-      printf '%s\n' "Read this file at the start of every task and follow it:"
+      printf '%s\n' "Follow the rules in this file:"
       printf '%s\n' "$RULES"
+      printf '\n'
+      printf '%s\n' "Read it only if its full contents are absent from the current context."
       printf '\n'
       printf '%s\n' "It covers prose written for humans: commit messages, PR bodies,"
       printf '%s\n' "code comments, docs and chat replies, plus how to answer and how"
-      printf '%s\n' "to treat git history. Read it before writing any of those."
+      printf '%s\n' "to treat git history."
     else
       printf '%s\n' "# Source: $RULES"
       printf '\n'
