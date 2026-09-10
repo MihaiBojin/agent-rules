@@ -1,9 +1,9 @@
 # agent-rules
 
 Rules for coding agents, kept in one place and referenced from projects instead
-of copy-pasted. Five of them: how to write prose for humans, how to answer me,
-how to describe a change, how to treat git history, and how much to build when
-writing code.
+of copy-pasted. Six of them: how to write prose for humans, how to answer me,
+how to carry a numbered thread across a session, how to describe a change, how
+to treat git history, and how much to build when writing code.
 
 `rules/*.md` holds them, one file per rule. Everything else exists to get those
 files in front of Claude Code, Codex, and Antigravity without keeping a separate
@@ -11,38 +11,48 @@ copy for each.
 
 ## What a session looks like with them on
 
-`rules/20-answering.md` changes the shape of every reply, so it is the one you
-notice from the first message. An agent numbers the topics you raise and marks
-each number with a trailing slash: 1/, 2/, 3/, flat. Each gets a heading, a
-`Topic:` line saying what problem the number exists to solve, and a `Context:`
-line pointing at a file when the background needs more than a sentence. The
-number stays with its topic for the whole session, never reused and never
-renumbered, and it is carried into later turns until you answer it or it stops
-applying. Answer with "3/ yes, drop it" and there is no ambiguity about what
-you dropped.
+`rules/25-threads.md` changes the shape of every reply, so it is the one you
+notice from the first message. An agent gives everything you raise a number
+with a trailing slash, flat: 1/, 2/, 3/. Each thread gets one heading line
+stating what is unsettled, a `---` above it drawn across the terminal, and a
+`Context:` line pointing at a file when the background needs more than a
+heading. The number stays with its thread for the whole session, never reused
+and never renumbered, and it is carried into later turns until you answer it or
+it stops applying. Answer with "3/ yes, drop it" and there is no ambiguity
+about what you dropped.
 
-A second level shows up only for a real list inside one topic. Four deletions
+A second level shows up only for a real list inside one thread. Four deletions
 under 5/ are 5.1/ through 5.4/. That is also why no list in an answer opens at a
-bare `1.`, which would collide with topic 1/.
+bare `1.`, which would collide with thread 1/.
 
-You open a topic yourself with a `+`:
+You drive it from the start of a line you type:
 
 | You type | You get |
 |---|---|
-| `+ can we cache this?` | a new topic at the lowest number the session has not used |
+| `3/ yes, drop it` | your answer lands on thread 3 |
+| `+ can we cache this?` | a new thread at the lowest number the session has not used |
 | `+/ can we cache this?` | the same, if the slash is already in your fingers |
 | `5+ what about the tests?` | the next free child of 5/, so 5.3/ once 5.1/ and 5.2/ exist |
 | `5+/ what about the tests?` | the same |
+| `3/$` | thread 3 closed, named once as `Closed: 3/` and never raised again |
 
 Lowest unused, not one past the highest, so a number you dropped stays dropped
 instead of coming back attached to something else. A `+` inside text you paste
-is not a marker, which keeps a diff hunk from reading as forty new topics.
+is not a marker, which keeps a diff hunk from reading as forty new threads.
 
-The rest of that file governs the answer around the numbers. Settled things come
-first and the ones needing your decision come last, with nothing after them.
-When a task holds decisions only you can make, the reply holds those decisions
-alone, numbered to match the full answer that follows once you have chosen. A
-claim about the code comes with the command that produced it.
+Reopening a closed thread is the same `3/` you would use to answer it. It comes
+back at its old number under its old heading, opening with two or three
+sentences on where it stood when you closed it.
+
+Settled threads come first in a reply and the ones needing your decision come
+last, with nothing after them. When a task holds decisions only you can make,
+the reply holds those decisions alone, numbered to match the full answer that
+follows once you have chosen.
+
+`rules/20-answering.md` governs the answer around the threads. A verdict leads
+every point instead of trailing the explanation, a claim about the code comes
+with the command that produced it, and one option gets recommended rather than
+four surveyed.
 
 ## Files
 
