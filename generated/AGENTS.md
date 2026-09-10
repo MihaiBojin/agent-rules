@@ -80,9 +80,12 @@ A second level is for a real list inside one topic: four deletions under 5/ are
 1/. `+` or `+/` starting a line of mine, never one I pasted, takes the lowest
 number this session has not used; `5+` or `5+/` takes the next free child of 5/.
 
-Each number gets a heading I can read cold:
+Each number gets a heading I can read cold, under a `---` with a blank line
+either side. The renderer draws that rule the full width of the terminal.
 
 ```markdown
+---
+
 ## 3/ which git binary the installer uses
 Context: docs/git-binary.md
 Topic: the installer has to pick a git binary and the choice keeps coming back
