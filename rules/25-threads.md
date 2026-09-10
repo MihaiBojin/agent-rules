@@ -1,11 +1,9 @@
 ## Threads
 
-A thread is one thing I can answer on its own, numbered flat with a trailing
-slash: 1/, 2/, 3/. The number belongs to the thread and not to its place in the
-answer: never reuse one, never renumber. A heading holding three decisions is
-three threads, and status belonging to 7/ goes on 7/ or nowhere. A second level
-is for a real list inside one thread, so four deletions under 5/ are 5.1/
-through 5.4/, and no list in an answer opens at a bare `1.`.
+A thread is one thing I can answer on its own, numbered flat with a trailing slash: 1/, 2/, 3/. The number belongs to
+the thread and not to its place in the answer: never reuse one, never renumber. A heading holding three decisions is
+three threads, and status belonging to 7/ goes on 7/ or nowhere. A second level is for a real list inside one thread, so
+four deletions under 5/ are 5.1/ through 5.4/, and no list in an answer opens at a bare `1.`.
 
 Markers, at the start of a line I typed and never one I pasted:
 
@@ -18,11 +16,10 @@ Markers, at the start of a line I typed and never one I pasted:
 | `3.2/$` | close 3.2/ and leave 3/ open |
 | `=/` | list every open thread and do nothing else |
 
-One heading line per thread, saying what is unsettled rather than the area it
-belongs to, word for word the same while the thread is open. A `---` sits above
-it with a blank line either side, drawn by the renderer at the full width of the
-terminal. `Context:` under it names a file holding background too big for a
-heading, path relative to the repo root, and is absent when there is none.
+One heading line per thread, saying what is unsettled rather than the area it belongs to, word for word the same while
+the thread is open. A `---` sits above it with a blank line either side, drawn by the renderer at the full width of the
+terminal. `Context:` under it names a file holding background too big for a heading, path relative to the repo root, and
+is absent when there is none.
 
 ```markdown
 ---
@@ -30,23 +27,17 @@ heading, path relative to the repo root, and is absent when there is none.
 ## 3/ whether the marketplace still describes anything that exists at HEAD
 ```
 
-An open thread appears in every answer until I answer it or it stops applying.
-One I answered partly stays open with the remainder narrowed. Drop one that
-stopped applying, and say which and why. `3/$` closes a thread and needs no
-reason from you, because I closed it. A closed thread gets no heading and no
-mention afterwards, and its number stays spent. Name what closed this turn on
-one line at the top of the answer, `Closed: 3/, 4/`, and never again. `3/` on a
-closed thread reopens it at the same number under the same heading, and
-reopening 3.2/ brings 3/ back with it. Never assume I remember a thread: one
-reopened, or one an answer leans on, opens with two or three sentences on where
-it stood.
+An open thread appears in every answer until I answer it or it stops applying. One I answered partly stays open with the
+remainder narrowed. Drop one that stopped applying, and say which and why. `3/$` closes a thread and needs no reason
+from you, because I closed it. A closed thread gets no heading and no mention afterwards, and its number stays spent.
+Name what closed this turn on one line at the top of the answer, `Closed: 3/, 4/`, and never again. `3/` on a closed
+thread reopens it at the same number under the same heading, and reopening 3.2/ brings 3/ back with it. Never assume I
+remember a thread: one reopened, or one an answer leans on, opens with two or three sentences on where it stood.
 
-`=/` asks for the list: every open thread as its heading line under its `---`,
-in number order, with nothing written under it and nothing else in the reply.
-No `Closed:` line and no work. One line saying nothing is open when the
-session has none.
+`=/` asks for the list: every open thread as its heading line under its `---`, in number order, with nothing written
+under it and nothing else in the reply. No `Closed:` line and no work. One line saying nothing is open when the session
+has none.
 
-Order the answer by state: what is settled first, what I have to decide last,
-and no recap after it. When a task holds decisions only I can make, reply with
-those decisions alone, numbered to match the answer you deliver once I have
+Order the answer by state: what is settled first, what I have to decide last, and no recap after it. When a task holds
+decisions only I can make, reply with those decisions alone, numbered to match the answer you deliver once I have
 chosen. When nothing is open, the answer stops at the last real thread.
