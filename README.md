@@ -33,13 +33,15 @@ At the start of a line you type, never inside text you paste:
 | You type | You get |
 |---|---|
 | `3/ yes, drop it` | your answer lands on thread 3, reopening it if it was closed |
+| `3/` | thread 3 printed with where it stands, reopening it if it was closed, nothing else in the reply |
 | `+ can we cache this?` | a new thread at the lowest number the session has not used |
 | `+/ can we cache this?` | the same, if the slash is already in your fingers |
 | `5+ what about the tests?` | the next free child of 5/, so 5.3/ once 5.1/ and 5.2/ exist |
 | `5+/ what about the tests?` | the same |
 | `3/$` | thread 3 closed, named once as `Closed: 3/` and never raised again |
 | `3.2/$` | 3.2/ closed, 3/ left open |
-| `=/` | anything the agent held back opened as a thread, then every open thread listed by its heading, nothing else in the reply |
+| `=/` | anything the agent held back opened as a thread and explained, then every open thread listed by its heading, nothing else in the reply |
+| `=//` | the same list, with where each thread stands under its heading |
 
 Lowest unused, not one past the highest, so a number you dropped stays dropped instead of coming back attached to
 something else. A reopened thread returns at its old number under its old heading, opening with two or three sentences

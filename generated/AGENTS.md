@@ -85,12 +85,14 @@ Markers, at the start of a line I typed and never one I pasted:
 
 | I type | it means |
 | --- | --- |
-| `3/` | answer thread 3, reopening it if it was closed |
+| `3/ yes` | answer thread 3, reopening it if it was closed |
+| `3/` and nothing else | print thread 3 and where it stands, reopening it if it was closed |
 | `+` or `+/` | open a thread at the lowest unused number, not one past the highest |
 | `5+` or `5+/` | open the next free child of 5/ |
 | `3/$` | close thread 3, and 3.1/ and 3.2/ with it |
 | `3.2/$` | close 3.2/ and leave 3/ open |
-| `=/` | open anything missed, then list every open thread and do nothing else |
+| `=/` | open anything missed, then list every open thread by heading and do nothing else |
+| `=//` | the same list, with where each thread stands under its heading |
 
 A skill or a command decides how its own output reads. It does not suspend the numbering: whatever it leaves me to
 decide is a thread, opened in the same answer.
@@ -117,8 +119,16 @@ remember a thread: one reopened, or one an answer leans on, opens with two or th
 
 `=/` asks for the list: every open thread as its heading line under its `---`, in number order, with nothing written
 under it and nothing else in the reply. No `Closed:` line and no work. It audits before it lists: anything that should
-already have been a thread opens at the lowest unused number, then the list prints. An empty list says there is nothing
-left, not that nothing was numbered. One line saying nothing is open when the session has none.
+already have been a thread opens at the lowest unused number, then the list prints. One the audit just opened carries
+its two or three sentences even here, since nothing before this answer said what it is, and every heading I have
+already seen stays bare. An empty list says there is nothing left, not that nothing was numbered. One line saying
+nothing is open when the session has none.
+
+`=//` prints the same audited list with the background under each heading: its `Context:` line, and two or three
+sentences saying where the thread stands and what it is waiting on. Still no work.
+
+`3/` with nothing after the number asks for one thread that way, heading and background both. It reopens a closed
+thread like any `3/`, and a word after the number makes it an answer instead.
 
 Order the answer by state: what is settled first, what I have to decide last, and no recap after it. When a task holds
 decisions only I can make, reply with those decisions alone, numbered to match the answer you deliver once I have
