@@ -39,7 +39,7 @@ At the start of a line you type, never inside text you paste:
 | `5+/ what about the tests?` | the same |
 | `3/$` | thread 3 closed, named once as `Closed: 3/` and never raised again |
 | `3.2/$` | 3.2/ closed, 3/ left open |
-| `=/` | every open thread listed by its heading, nothing else in the reply |
+| `=/` | anything the agent held back opened as a thread, then every open thread listed by its heading, nothing else in the reply |
 
 Lowest unused, not one past the highest, so a number you dropped stays dropped instead of coming back attached to
 something else. A reopened thread returns at its old number under its old heading, opening with two or three sentences
