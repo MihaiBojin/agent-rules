@@ -26,6 +26,9 @@ turns until you answer it or it stops applying. Answer with "3/ yes, drop it" an
 dropped. A second level shows up only for a real list inside one thread, which is why four deletions under 5/ are 5.1/
 through 5.4/ and no list in an answer opens at a bare `1.`.
 
+Ways of settling one thread get letters instead of digits, so a thread that can go three ways offers 15a/, 15b/ and
+15c/ in the order the agent would take them. Type `15b` and thread 15 is settled, its other options closed with it.
+
 ### Commands
 
 At the start of a line you type, never inside text you paste:
@@ -38,6 +41,8 @@ At the start of a line you type, never inside text you paste:
 | `+/ can we cache this?` | the same, if the slash is already in your fingers |
 | `5+ what about the tests?` | the next free child of 5/, so 5.3/ once 5.1/ and 5.2/ exist |
 | `5+/ what about the tests?` | the same |
+| `15b` or `15b/` | thread 15 settled by taking option b, its other options closed with it |
+| `15b/$` | option b ruled out, thread 15 left open to the rest |
 | `3/$` | thread 3 closed, named once as `Closed: 3/` and never raised again |
 | `3.2/$` | 3.2/ closed, 3/ left open |
 | `=/` | anything the agent held back opened as a thread and explained, then every open thread listed by its heading, nothing else in the reply |
