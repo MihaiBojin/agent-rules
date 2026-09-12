@@ -10,16 +10,31 @@ is a problem you found on the way to something else. Open it at the lowest unuse
 answer. Nothing waits for me to ask. If I would hear it when I ask what else there is, it is already a thread: work you
 would do on a yes, an option you dropped without telling me.
 
+When a thread can go more than one way, the ways are lettered under it: `15a/`, `15b/`, `15c/`, one line each under the
+thread's heading, never headings of their own. Letters settle a thread and digits divide it, so 15.1/ and 15.2/ each
+need their own answer while one letter ends 15/. They run in the order you would take them, so `a` is the one you would
+take, and when none of them is, the line above the list says so.
+
+`15a/` picks a, closing 15/ and the other letters with it. `15a/$` rules a out and leaves 15/ open. A letter is spent
+like a number, so a set offered after b was ruled out opens at d. The live letters print under the heading in every
+answer until the thread closes, and a ruled-out one gets no line and no mention. I can answer in prose when none of them
+fit: `15/ neither, cache it` is the next free letter, and 15/ stays open until I pick.
+
+A choice written as a sentence is still a choice. "We could either drop the flag or keep it behind a config key" is two
+letters that did not get written, so write the letters or pick one and say why.
+
 Markers, at the start of a line I typed and never one I pasted:
 
 | I type | it means |
 | --- | --- |
 | `3/ yes` | answer thread 3, reopening it if it was closed |
 | `3/` and nothing else | print thread 3 and where it stands, reopening it if it was closed |
+| `15a/` or `15a` | pick a on thread 15, closing 15/ and its other letters with it |
 | `+` or `+/` | open a thread at the lowest unused number, not one past the highest |
 | `5+` or `5+/` | open the next free child of 5/ |
 | `3/$` | close thread 3, and 3.1/ and 3.2/ with it |
 | `3.2/$` | close 3.2/ and leave 3/ open |
+| `15a/$` | rule a out, leaving 15/ open |
 | `=/` | open anything missed, then list every open thread by heading and do nothing else |
 | `=//` | the same list, with where each thread stands under its heading |
 
@@ -54,7 +69,8 @@ already seen stays bare. An empty list says there is nothing left, not that noth
 nothing is open when the session has none.
 
 `=//` prints the same audited list with the background under each heading: its `Context:` line, and two or three
-sentences saying where the thread stands and what it is waiting on. Still no work.
+sentences saying where the thread stands and what it is waiting on. A thread waiting on a pick lists its live letters
+there, and `=/` leaves them out with everything else. Still no work.
 
 `3/` with nothing after the number asks for one thread that way, heading and background both. It reopens a closed
 thread like any `3/`, and a word after the number makes it an answer instead.
