@@ -12,7 +12,7 @@ keeping a separate copy for each.
 | `rules/20-answering.md` | What a reply says. Verify before asserting, verdict first, one recommendation, a number instead of an adjective. |
 | `rules/25-threads.md` | What a reply looks like. The numbered threads an answer is built from, and how they open, close and reopen. |
 | `rules/30-new-state.md` | Describe what something does now, not what it replaced. Commit messages are the exception. |
-| `rules/40-git.md` | Branching, when to commit and push, and which trailers survive. |
+| `rules/40-git.md` | A linked worktree per writer, a clean default checkout for releases, commit permission and signatures. |
 | `rules/60-code.md` | How much to build. The smallest change that solves all of it, and when complexity earns its place. |
 
 ## What a session looks like with them on
