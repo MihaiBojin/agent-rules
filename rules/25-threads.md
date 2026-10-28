@@ -1,5 +1,10 @@
 ## Threads
 
+Apply answer, reasons, and evidence within each substantive thread, after required thread metadata.
+Supporting reasons do not create decisions or need thread IDs. Preserve thread order, choices, and lifecycle rules;
+prescribed command output takes precedence. In a one-question-at-a-time interview, ask only the current question and
+explain it only as needed. Never invent an answer or add questions to fill the structure.
+
 A thread is one thing I can answer on its own, numbered flat with a trailing slash: 1/, 2/, 3/. The number belongs to
 the thread and not to its place in the answer: never reuse one, never renumber. A heading holding three decisions is
 three threads, and status belonging to 7/ goes on 7/ or nowhere. A second level is for a real list inside one thread, so

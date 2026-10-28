@@ -220,10 +220,9 @@ class InstallerTests(unittest.TestCase):
 
     def test_problem_reporting_is_full_only(self):
         self.run_make('build')
-        paragraph = ('Tell me about a problem as soon as you find it: bugs you introduced, gaps you left, places where my own instructions\n'
-                     'were wrong. Say it where it belongs, in the same voice as everything else, never bundled with other caveats.')
-        self.assertEqual(self.artifact('full').read_text().count(paragraph), 1)
-        self.assertNotIn(paragraph, self.artifact('limited').read_text())
+        sentence = 'Report problems as soon as you find them: bugs you introduced, gaps you left, wrong instructions.'
+        self.assertEqual(self.artifact('full').read_text().count(sentence), 1)
+        self.assertNotIn(sentence, self.artifact('limited').read_text())
 
     def test_failed_codex_link_preserves_original_personal_file(self):
         agents = self.home / '.codex/AGENTS.md'
