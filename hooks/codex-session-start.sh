@@ -13,5 +13,11 @@ command -v jq >/dev/null 2>&1 || exit 0
 rules="${1:-$(dirname "$0")/../generated/AGENTS.md}"
 [ -r "$rules" ] || exit 0
 
-jq -Rs --arg event SessionStart \
-  '{hookSpecificOutput: {hookEventName: $event, additionalContext: .}}' < "$rules"
+# The compiled file is shared. Personal instructions stay in the user's home.
+{ cat "$rules"
+  if [ -r "$HOME/.codex/agent-rules-personal.md" ]; then
+    printf '\n'
+    cat "$HOME/.codex/agent-rules-personal.md"
+  fi
+} | jq -Rs --arg event SessionStart \
+  '{hookSpecificOutput: {hookEventName: $event, additionalContext: .}}'

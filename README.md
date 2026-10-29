@@ -1,21 +1,26 @@
 # agent-rules
 
-Rules for coding agents, kept in one place and referenced from projects instead of copy-pasted. `rules/*.md` holds them,
-one file per rule. Everything else exists to get those files in front of Claude Code, Codex, and Antigravity without
-keeping a separate copy for each.
+Rules for coding agents, kept in one place and referenced from projects instead of copy-pasted. `rules/` holds them,
+one file per rule. `profiles/full.list` and `profiles/limited.list` name the sources each profile loads. The installer
+wires those files into Claude Code, Codex and Antigravity.
 
 ## The rules
 
 | File | What it governs |
 |---|---|
-| `rules/10-writing.md` | Prose written for humans: docs, commit messages, chat replies. Banned constructions with an example beside each. |
-| `rules/20-answering.md` | What a reply says. Verify before asserting, verdict first, one recommendation, a number instead of an adjective. |
-| `rules/25-threads.md` | What a reply looks like. The numbered threads an answer is built from, and how they open, close and reopen. |
-| `rules/30-new-state.md` | Describe what something does now, not what it replaced. Commit messages are the exception. |
-| `rules/40-git.md` | A linked worktree per writer, a clean default checkout for releases, commit permission and signatures. |
-| `rules/60-code.md` | How much to build. The smallest change that solves all of it, and when complexity earns its place. |
+| `rules/10-writing.md` | Prose conventions for docs, commit messages, PRs and code comments. Both profiles. |
+| `rules/18-verification.md` | Verify before asserting. Both profiles. |
+| `rules/20-answering.md` | Verdict first, problem reporting, one recommendation and concrete answers. Full only. |
+| `rules/25-threads.md` | Numbered conversation threads and their commands. Full only. |
+| `rules/30-new-state.md` | Describe the current behavior in documentation, PRs and comments. Both profiles. |
+| `rules/full/31-conversation-scope.md` | Extend prose conventions to chat replies. Full only. |
+| `rules/40-git.md` | Worktree isolation, commit permission and signatures. Both profiles. |
+| `rules/60-code.md` | Build the requested scope with the smallest design that meets it. Both profiles. |
 
-## What a session looks like with them on
+The limited profile keeps engineering obligations and prose conventions for repository text. Its prose conventions do
+not govern chat replies. The full profile includes every rule and the existing thread protocol.
+
+## What a session looks like with the full profile
 
 `rules/25-threads.md` is the one you notice from the first message. An agent gives everything you have to decide a
 number with a trailing slash, flat: 1/, 2/, 3/, whether you raised it or the agent turned it up on its own. A choice it
@@ -66,32 +71,52 @@ make install
 
 | Command | What it does |
 |---|---|
-| `make build` | Regenerate `generated/AGENTS.md` from `rules/*.md` |
-| `make install` | User-level wiring, every tool it detects |
-| `make project` | Per-repo wiring. `DIR=/path` targets another repo |
-| `make status` | What is wired up right now |
-| `make uninstall` | Undo both scopes |
+| `make install` | Install the full profile globally. Also restores full after a limited install. |
+| `make install-limited` | Install the limited profile globally. |
+| `make project DIR=/path/to/repo` | Install full project rules. |
+| `make project-limited DIR=/path/to/repo` | Install limited project rules. |
+| `make build` | Build both `generated/AGENTS.md` and `generated/AGENTS-limited.md`. |
+| `make status DIR=/path/to/repo` | Report both scope profiles, wiring and artifact freshness. |
+| `make uninstall DIR=/path/to/repo` | Remove global wiring and this project's owned wiring. Keep backups and personal text. |
+| `make test` | Run stdlib unittest integration tests in temporary repositories and fake home directories. |
 
-`install.sh` writes absolute paths, so where you clone matters: move the repo and re-run `make install`. Re-running is
-safe, anything in the way is moved to `<path>.bak-<timestamp>`, and `./install.sh` with no arguments offers the same set
-as a menu. It skips a tool whose config directory is missing unless you set `AGENT_RULES_ALL=1`. Open Codex once
-afterwards and accept the hook it prompts for.
+`DIR` defaults to the current directory. The shell commands are `./install.sh global`, `global-limited`, `project [path]`
+and `project-limited [path]`. Running the installer without arguments offers a menu. Global installation skips a tool
+whose config directory is missing unless `AGENT_RULES_ALL=1` is set.
+
+Global selection is saved in `~/.config/agent-rules/profile`; project selection is saved in `.agent-rules-profile`.
+A limited project does not remove full rules loaded globally. `make status` infers older installations and warns when scope profiles differ. Use
+`make install-limited` and `make project-limited DIR=/path/to/repo` for limited rules at both scopes. Full rollback uses
+`make install` and `make project DIR=/path/to/repo`. Both compiled files keep their own paths across every switch.
 
 ## Where the rules land
 
 | Tool | Global | Project | Scoping |
 |---|---|---|---|
 | Claude Code | `~/.claude/rules/*.md`, one symlink per rule | `.claude/rules/*.md`, same | `paths:` frontmatter |
-| Codex | `SessionStart` hook in `~/.codex/config.toml`, plus a pointer in `~/.codex/AGENTS.md` | `AGENTS.md` symlink, read as a chain from git root down to cwd | none |
+| Codex | `~/.codex/AGENTS.md` symlink to the selected artifact, plus a `SessionStart` hook | `AGENTS.md` symlink, read as a chain from git root down to cwd | none |
 | Antigravity | `@` include line in `~/.gemini/GEMINI.md` | `.agents/rules/*.md`, one symlink per rule | four activation modes |
 
 None of the three fetches a URL, so every path is a local file, and nothing holds a copy: a symlink, an
 `@/absolute/path`, or a hook that reads the file at session start. Editing a rule needs `make build` and nothing else.
 
-Codex gets both the hook and a managed block in `~/.codex/AGENTS.md`, because a hook stays untrusted until you accept it
-once in the TUI and is skipped silently until then. The installer maintains only its own marked block in any config file
-it touches, so `make uninstall` leaves the rest byte-identical, and a project with its own `AGENTS.md` keeps it. After a
-project install, set each new rule's activation to **Always On** in the Antigravity panel. That one can't be scripted.
+Codex loads the selected artifact through its global symlink. Its SessionStart hook reads that same artifact and
+injects it alongside `~/.codex/agent-rules-personal.md`. The first install backs up an existing global `AGENTS.md` and
+moves personal text above and below its managed block into that personal file. Both artifacts explicitly instruct the
+agent to read the personal file only when its contents are absent from context. The trusted hook includes its text
+directly. Accept the hook in the Codex TUI for that injection. Uninstall restores the personal text to a regular global `AGENTS.md` and keeps the migration file and backups.
+Personal instructions are private to each home directory and never enter the checked-in artifacts. Link replacements
+are staged beside their destinations; creation, backup or replacement failures leave existing instructions in place.
+
+A nonempty global `AGENTS.override.md` causes a safe refusal: Codex reads it instead of `AGENTS.md`, according to the
+[official discovery order](https://learn.chatgpt.com/docs/agent-configuration/agents-md). Conflicting migration files,
+malformed managed blocks and unrelated global Codex symlinks also cause a refusal without replacing personal text.
+Project `AGENTS.md` files and unrelated symlinks remain in place. Claude and Antigravity rule directories reconcile only
+this checkout's owned links, including excluded rules whose source files still exist. Existing personal rule files with
+a selected filename remain in place; status reports partial wiring.
+
+After a project install, set each new rule's activation to **Always On** in the Antigravity panel. Global Antigravity
+loads the selected artifact through its managed `@` include. Its personal text stays outside that block.
 
 ## Size limits
 
@@ -101,8 +126,9 @@ Every line costs context in every session.
 
 ## Editing the rules
 
-Edit `rules/*.md`, then `make build`. `make status` prints `STALE` when the artifact and the sources disagree, and
-nothing reads the artifact as a source, so an edit made there is lost on the next build.
+Edit `rules/` and the explicit profile lists, then run `make build`. New sources must be listed in every profile that
+needs them. `make status` prints `STALE` for each artifact that differs from its selected sources. Edits to generated
+files are lost on the next build.
 
 The edit reaches your next session, not the one you are sitting in. Claude Code attaches the rules to the first message
 of a session and replays that attachment when you resume, so a session opened on Monday still answers by Monday's rules

@@ -1,7 +1,7 @@
 ## Writing
 
-For prose written for humans: docs, READMEs, commit messages, PR bodies, code comments, chat replies. Not code,
-identifiers, log lines, quoted output, or anything inside a fenced code block.
+For prose in docs, READMEs, commit messages, PR bodies and code comments. These conventions do not apply to chat replies
+unless a profile explicitly extends their scope. Not code, identifiers, log lines, quoted output or fenced code blocks.
 
 The prose already in my repos is agent-written too, so none of it is evidence that a construction is acceptable. When it
 and these rules disagree, the rules win: do not match the file you are editing, do not cite a neighboring document, do

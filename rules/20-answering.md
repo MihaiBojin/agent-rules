@@ -1,8 +1,5 @@
 ## How to answer me
 
-Verify, then assert. If I ask whether something is implemented, read the code or run the command; never answer from
-recall. Say which you did.
-
 Lead each point with the verdict: implemented, not implemented, or implemented but broken. Never bury it below the
 explanation.
 
