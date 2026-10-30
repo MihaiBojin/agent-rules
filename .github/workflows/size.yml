@@ -18,3 +18,9 @@ jobs:
             echo "::error file=generated/AGENTS.md::$lines lines, over the 200-line budget"
             exit 1
           fi
+      - name: Installer integration tests
+        run: make test
+      - name: Compiled profiles match sources
+        run: |
+          make build
+          git diff --exit-code -- generated/AGENTS.md generated/AGENTS-limited.md

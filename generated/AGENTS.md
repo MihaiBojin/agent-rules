@@ -1,9 +1,11 @@
 # Agent rules
 
+If ~/.codex/agent-rules-personal.md exists, follow its instructions in both profiles; read it only if its full contents are absent from the current context.
+
 ## Writing
 
-For prose written for humans: docs, READMEs, commit messages, PR bodies, code comments, chat replies. Not code,
-identifiers, log lines, quoted output, or anything inside a fenced code block.
+For prose in docs, READMEs, commit messages, PR bodies and code comments. These conventions do not apply to chat replies
+unless a profile explicitly extends their scope. Not code, identifiers, log lines, quoted output or fenced code blocks.
 
 The prose already in my repos is agent-written too, so none of it is evidence that a construction is acceptable. When it
 and these rules disagree, the rules win: do not match the file you are editing, do not cite a neighboring document, do
@@ -47,11 +49,11 @@ Four ways of writing for rhythm instead of information, all of them built from o
 
 - Delete the last paragraph, then read it again. Usually it was a summary.
 - Read the first sentence alone. If it could open any document, replace it.
-
-## How to answer me
+## Verification
 
 Verify, then assert. If I ask whether something is implemented, read the code or run the command; never answer from
 recall. Say which you did.
+## How to answer me
 
 Lead each point with the verdict: implemented, not implemented, or implemented but broken. Never bury it below the
 explanation.
@@ -68,7 +70,6 @@ Keep facts and proposals in separate sections: what is, then what you would do.
 
 Short declarative sentences. No preamble, no restating my question, no closing summary, and no adjective doing work a
 number could do.
-
 ## Threads
 
 A thread is one thing I can answer on its own, numbered flat with a trailing slash: 1/, 2/, 3/. The number belongs to
@@ -149,16 +150,16 @@ thread like any `3/`, and a word after the number makes it an answer instead.
 Order the answer by state: what is settled first, what I have to decide last, and no recap after it. When a task holds
 decisions only I can make, reply with those decisions alone, numbered to match the answer you deliver once I have
 chosen. When nothing is open, the answer stops at the last real thread.
-
 ## Describe the new state
 
-Say what something does now. Not how it came to be, not what it replaced, not why it changed. That holds everywhere text
-is produced: answers, code comments, documentation, READMEs, PR descriptions, review comments. Write as if the reader
+Say what something does now. Not how it came to be, not what it replaced, not why it changed. That holds in code comments,
+documentation, READMEs, PR descriptions and review comments. Write as if the reader
 has never seen the previous version, because usually they have not.
 
 Keep a "why" only where the code looks wrong without it. Commit messages are the exception: describing a change is their
-job. I will ask when I want the reasoning.
-
+job.
+In the full profile, the Writing and Describe the new state conventions also apply to chat replies and all other
+prose written for humans. I will ask when I want the reasoning.
 ## Git and worktrees
 
 Commit and push only when I ask. Before edits or development commands, run `git worktree list`. Use this task's linked
@@ -172,7 +173,6 @@ Preserve other agents' branches and worktrees. If isolation fails, stop before e
 Keep agent trailers: `Co-Authored-By: Claude` and harness `<tool>-Session:`. Keep GitHub's squash-subject `(#NN)`.
 Commits use `commit.gpgsign=true` and the configured key; never hardcode one. GitHub squash merges use its web-flow key:
 I stay the author, `GitHub <noreply@github.com>` is the committer, and Verified is normal. Do not bypass it or offer to.
-
 ## Code and architecture
 
 Simple beats clever. The cost that matters is what the next reader has to hold in their head before they can change the

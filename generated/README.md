@@ -1,20 +1,21 @@
 # generated/
 
-`AGENTS.md` here is built by `../install.sh build` from `../rules/*.md`. Edits
-made to it are discarded on the next build.
+`AGENTS.md` is the full profile. `AGENTS-limited.md` is the limited profile.
+`../install.sh build` compiles both from the sources explicitly named in
+`../profiles/full.list` and `../profiles/limited.list`. Generated edits are
+lost on the next build. Neither artifact contains personal instructions.
 
-It is committed because Codex and Hermes read a single file and have no import
-syntax, so `install.sh project` symlinks this artifact into the repo it wires
-up. Claude Code and Antigravity read a directory and get `../rules/*.md`
-directly.
+Codex symlinks the selected artifact globally and in projects. Its global
+SessionStart hook reads the same selected file and injects migrated personal
+text from the user's home directory. Both artifacts instruct the agent to
+read that personal file when present. Claude Code and project Antigravity
+get symlinks to the selected source files. Global Antigravity gets an `@`
+include of the selected artifact.
 
-It sits here rather than at the repo root so that agents working *on* this
-repo don't pick it up as their own guidance.
+Both artifacts are committed and keep distinct paths across installations.
+They sit here so agents working on this repo do not load them as root guidance.
 
-To change a rule, edit the file under `../rules/` and run:
-
-```bash
-./install.sh build
-```
-
-`./install.sh status` prints `STALE` when this file and `../rules/` disagree.
+Edit sources under `../rules/` and their profile lists, then run `make build`.
+`make status` reports freshness for both files. `make test` checks generated
+output against the checked-in artifacts and exercises the real installer with
+fake home directories, including full/limited switches and personal migration.
