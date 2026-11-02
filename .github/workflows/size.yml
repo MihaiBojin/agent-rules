@@ -7,7 +7,11 @@ on:
 
 jobs:
   lines:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-26.04]
     steps:
       - uses: actions/checkout@v7
       - name: generated/AGENTS.md stays under 200 lines
