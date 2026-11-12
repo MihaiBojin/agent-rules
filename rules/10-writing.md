@@ -17,29 +17,15 @@ such as a table's `—` for "not present", a changelog's shape, a template someb
 - Stacked hedges: "may potentially", "could possibly", "generally tends to".
 - Three-item lists where two or four would be truthful. Count the items.
 - A closing paragraph that restates what was said, or an opening that restates the question.
-- A bolded lead-in on every bullet. Bold one at most, and only when it outranks the rest.
-- A rhetorical question opening or closing a section. Emoji in headings.
 - Em-dashes. A comma, a colon, a semicolon or a full stop does the same work.
+- A sentence that defines its subject and could not be false. Say what the thing does.
 
-Four ways of writing for rhythm instead of information, all of them built from ordinary words:
+### Do
 
-- A list item that only points back at the ones before it: "and the two moves between them", "and everything that came
-  with it".
-- Code that leaves, arrives, survives or dies. Name the actor.
-- A number in a closing clause doing cadence rather than work: "and 3851 lines went with them".
-- A sentence that defines its subject and could not be false: "origin is a branch, a pull request, and the two moves
-  between them". Say what it does.
-
-### Instead
-
-- Vary sentence length on purpose. Two sentences with the same shape: rewrite one. A four-word sentence after a long one
-  lands hard.
-- Say the thing first, qualify after. Name the actor. Prefer the shorter word.
+- Say the thing first. Name the actor, or say it is unknown. Prefer the shorter word.
 - Concrete nouns and real numbers: "cut p99 from 400ms to 90ms", not "significantly improved performance".
-- Contractions are fine. Fragments are fine when they land.
-- One idea per paragraph. A caveat goes where it belongs, not in a section at the end.
-- Headings only when a reader needs to jump, bullets only for a real list, tables when the data has two dimensions.
-- No summary section under ~1500 words. No "Overview" above the first paragraph.
+- One idea per paragraph.
+- No summary section. No "Overview" above the first paragraph.
 
 ### Before finishing
 
