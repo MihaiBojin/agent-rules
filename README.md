@@ -10,8 +10,8 @@ wires those files into Claude Code, Codex and Antigravity.
 |---|---|
 | `rules/10-writing.md` | Prose conventions for docs, commit messages, PRs and code comments. Both profiles. |
 | `rules/18-verification.md` | Verify before asserting. Both profiles. |
-| `rules/20-answering.md` | Verdict first, problem reporting, one recommendation and concrete answers. Full only. |
-| `rules/25-threads.md` | Numbered conversation threads and their commands. Full only. |
+| `rules/20-answering.md` | What a reply says: the answer, supporting reasons, and evidence. One recommendation, no padding. Full only. |
+| `rules/25-threads.md` | What a reply looks like. The numbered threads an answer is built from, and how they open, close and reopen. Full only. |
 | `rules/30-new-state.md` | Describe the current behavior in documentation, PRs and comments. Both profiles. |
 | `rules/full/31-conversation-scope.md` | Extend prose conventions to chat replies. Full only. |
 | `rules/40-git.md` | Worktree isolation, commit permission and signatures. Both profiles. |
@@ -33,6 +33,29 @@ through 5.4/ and no list in an answer opens at a bare `1.`.
 
 Ways of settling one thread get letters instead of digits, so a thread that can go three ways offers 15a/, 15b/ and
 15c/ in the order the agent would take them. Type `15b` and thread 15 is settled, its other options closed with it.
+
+### Answers and evidence
+
+Substantive answers follow Barbara Minto’s Pyramid structure: the answer first, then distinct supporting reasons with
+concrete evidence beside each. Three reasons is the default when supported. Use fewer or more when the evidence calls
+for it; acknowledgments and single-fact answers need no supporting structure. Facts, inferences, and proposals remain
+distinguishable, and missing evidence is stated.
+
+This example supports one recommendation with three reasons and evidence tied to each:
+
+> Recommendation: Put the Pyramid guidance in `rules/20-answering.md`.
+>
+> It belongs with response substance. That file requires direct answers first.
+>
+> It fits the thread protocol. `rules/25-threads.md` places supporting reasons beneath thread metadata and reserves
+> thread IDs for decisions, so reasons can support one decision without opening more threads.
+>
+> It avoids padding. `rules/10-writing.md` rejects forced three-item lists, and `rules/20-answering.md` requires the
+> number of reasons the evidence supports.
+
+Thread IDs and lettered choices keep their meanings. Audit commands retain their prescribed output. During an
+interview, the agent asks only the current question; the structure does not require extra questions or an invented
+answer. A single fact such as “The generated file contains 200 lines” needs only the verification that supports it.
 
 ### Commands
 
