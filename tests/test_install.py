@@ -190,6 +190,36 @@ class InstallerTests(unittest.TestCase):
         self.assertIn('## Verification', context)
         self.assertNotIn('## Threads', context)
 
+    def test_hook_block_keeps_the_tables_codex_writes_into_it(self):
+        # Codex records the trust of each hook in [hooks.state] tables, and it
+        # writes them inside the managed block, after the hook tables.
+        config = self.home / '.codex/config.toml'
+        self.run_make('install-limited')
+        trust = ('\n[hooks.state]\n\n'
+                 '[hooks.state."dialogue@mihaibojin:hooks/codex.json:session_start:0:0"]\n'
+                 'trusted_hash = "sha256:00"\nenabled = true\n')
+        end = '# <<< agent-rules <<<\n'
+        config.write_text(config.read_text().replace(end, trust + end)
+                          + '\n[sandbox_workspace_write]\nwritable_roots = ["/tmp"]\n')
+
+        self.run_make('install')
+        installed = config.read_text()
+        self.assertEqual(installed.count('trusted_hash = "sha256:00"'), 1)
+        self.assertEqual(installed.count('[[hooks.SessionStart]]'), 1)
+        self.assertIn(str(self.artifact('full')), installed)
+        self.assertIn('writable_roots = ["/tmp"]', installed)
+
+        backups = set(config.parent.glob('config.toml.bak-*'))
+        self.run_make('install')
+        self.assertEqual(config.read_text(), installed)
+        self.assertEqual(set(config.parent.glob('config.toml.bak-*')), backups)
+
+        self.run_make('uninstall')
+        removed = config.read_text()
+        self.assertEqual(removed.count('trusted_hash = "sha256:00"'), 1)
+        self.assertNotIn('[[hooks.SessionStart]]', removed)
+        self.assertIn('writable_roots = ["/tmp"]', removed)
+
     def test_migration_keeps_newline_before_unterminated_end_marker(self):
         agents = self.home / '.codex/AGENTS.md'
         agents.write_text('Before.\n<!-- >>> agent-rules >>> -->\nold\n<!-- <<< agent-rules <<< -->')

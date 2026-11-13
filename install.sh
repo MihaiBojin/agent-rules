@@ -186,6 +186,21 @@ block() {
   rm -f "$tmp"
 }
 
+# strip_toml_block <config.toml>: the file without the managed block. Codex
+# writes tables of its own inside the block, such as [hooks.state] with the
+# trust it records for each hook. Those tables stay. Only the markers, the
+# comment and the two hook tables that codex_hook writes go.
+strip_toml_block() {
+  awk -v b="$TOML_BEGIN" -v e="$TOML_END" '
+    $0==b {inside=1; keep=0; next}
+    inside && $0==e {inside=0; next}
+    inside && /^[[:space:]]*\[/ {
+      keep = ($0 !~ /^[[:space:]]*\[\[hooks\.SessionStart(\.hooks)?\]\][[:space:]]*$/)
+    }
+    !inside || keep {print}
+  ' "$1"
+}
+
 # codex_hook <config.toml>: managed TOML block registering the SessionStart
 # hook. Codex injects the hook's output itself, so the rules cannot be skipped,
 # and the hook re-reads the file each session, so `build` is enough.
@@ -194,9 +209,7 @@ codex_hook() {
   mkdir -p "$(dirname "$dest")" 2>/dev/null || true
   tmp="$(mktemp)"; new="$(mktemp)"
   if [ -f "$dest" ]; then
-    awk -v b="$TOML_BEGIN" -v e="$TOML_END" '
-      $0==b {skip=1} skip==0 {print} $0==e {skip=0}
-    ' "$dest" \
+    strip_toml_block "$dest" \
     | awk 'NF{last=NR} {line[NR]=$0} END{for(i=1;i<=last;i++) print line[i]}' > "$tmp"
   else
     : > "$tmp"
@@ -330,13 +343,24 @@ unlink_ours() {
 }
 
 unblock() {
-  local dest="$1" b="${2:-$MARK_BEGIN}" e="${3:-$MARK_END}" tmp
+  local dest="$1" tmp
   [ -f "$dest" ] || return 0
-  grep -qF "$b" "$dest" 2>/dev/null || return 0
+  grep -qF "$MARK_BEGIN" "$dest" 2>/dev/null || return 0
   tmp="$(mktemp)"
-  awk -v b="$b" -v e="$e" '
+  awk -v b="$MARK_BEGIN" -v e="$MARK_END" '
     $0==b {skip=1} skip==0 {print} $0==e {skip=0}
   ' "$dest" > "$tmp"
+  mv "$tmp" "$dest" && say "  cleaned   $dest (managed block removed)"; CHANGED=1
+}
+
+# unblock_toml <config.toml>: remove the hook block, and keep the tables that
+# Codex wrote inside it.
+unblock_toml() {
+  local dest="$1" tmp
+  [ -f "$dest" ] || return 0
+  grep -qF "$TOML_BEGIN" "$dest" 2>/dev/null || return 0
+  tmp="$(mktemp)"
+  strip_toml_block "$dest" > "$tmp"
   mv "$tmp" "$dest" && say "  cleaned   $dest (managed block removed)"; CHANGED=1
 }
 
@@ -560,7 +584,7 @@ do_uninstall() {
   elif [ ! -L "$HOME/.codex/AGENTS.md" ]; then
     unblock "$HOME/.codex/AGENTS.md"
   fi
-  unblock     "$HOME/.codex/config.toml" "$TOML_BEGIN" "$TOML_END"
+  unblock_toml "$HOME/.codex/config.toml"
   unblock     "$HOME/.gemini/GEMINI.md"
   unlink_rules "$dir/.claude/rules"
   unlink_ours "$dir/.claude/hooks/check-prose.sh"

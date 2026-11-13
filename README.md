@@ -128,6 +128,8 @@ injects it alongside `~/.codex/agent-rules-personal.md`. The first install backs
 moves personal text above and below its managed block into that personal file. Both artifacts explicitly instruct the
 agent to read the personal file only when its contents are absent from context. The trusted hook includes its text
 directly. Accept the hook in the Codex TUI for that injection. Uninstall restores the personal text to a regular global `AGENTS.md` and keeps the migration file and backups.
+Install and uninstall keep the tables that Codex writes inside the managed block of `~/.codex/config.toml`, such as
+`[hooks.state]` with the trust it records for each hook.
 Personal instructions are private to each home directory and never enter the checked-in artifacts. Link replacements
 are staged beside their destinations; creation, backup or replacement failures leave existing instructions in place.
 
