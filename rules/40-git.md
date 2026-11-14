@@ -1,13 +1,13 @@
 ## Git and worktrees
 
-Commit, push and open the pull request once a change I decided on is implemented and its checks pass; merge only when I
-ask. Before edits or development commands, run `git worktree list`. Use this task's linked worktree and branch, one per
-writer. Development starts at the fetched default tip. Never share another agent's checkout or use main. Keep the main
-worktree clean on the default branch; fetch and fast-forward it at task start and after merges. Stop on failed sync and
-report it; never stash or discard work. Build and test in linked worktrees. Release preparation and fixes use linked
-worktrees and PRs. Main is for sync and publishing verified merged releases; serialize main updates and releases. Tag
-the verified commit. Prepare releases from the fetched configured branch. Preserve other agents' branches and worktrees.
-If isolation fails, stop before editing.
+Ship a change I decided on once it is implemented and its checks pass, without asking: commit, push, open the pull
+request and merge it when CI is ready. Before edits or development commands, run `git worktree list`. Use this task's
+linked worktree and branch, one per writer. Development starts at the fetched default tip. Never share another agent's
+checkout or use main. Keep the main worktree clean on the default branch; fetch and fast-forward it at task start and
+after merges. Stop on failed sync and report it; never stash or discard work. Build and test in linked worktrees.
+Release preparation and fixes use linked worktrees and PRs. Main is for sync and publishing verified merged releases;
+serialize main updates and releases. Tag the verified commit. Prepare releases from the fetched configured branch.
+Preserve other agents' branches and worktrees. If isolation fails, stop before editing.
 
 Keep agent trailers: `Co-Authored-By: Claude` and harness `<tool>-Session:`. Keep GitHub's squash-subject `(#NN)`.
 Commits use `commit.gpgsign=true` and the configured key; never hardcode one. GitHub squash merges use its web-flow key:
