@@ -2,25 +2,21 @@
 # agent-rules installer.
 #
 #   ./install.sh                  interactive menu (fzf if present)
-#   ./install.sh global           full user-level rules for every tool detected
-#   ./install.sh global-limited   limited user-level rules
-#   ./install.sh project [path]   full per-repo rules (default: cwd)
-#   ./install.sh project-limited [path] limited per-repo rules
-#   ./install.sh build            regenerate both compiled profiles
+#   ./install.sh global           user-level rules for every tool detected
+#   ./install.sh project [path]   per-repo rules (default: cwd)
+#   ./install.sh build            regenerate generated/AGENTS.md
 #   ./install.sh status [path]    what is wired up right now
 #   ./install.sh uninstall [path] undo both scopes
 #
-# profiles/*.list explicitly select sources under rules/. Codex uses a compiled
-# artifact; Claude Code and project Antigravity use one symlink per selected source.
+# Every rules/*.md is a source. Codex uses a compiled artifact; Claude Code and
+# project Antigravity use one symlink per source.
 # Existing personal rule files and unrelated symlinks are left untouched.
 # Global Codex personal text is migrated with a backup before replacing AGENTS.md.
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RULES_DIR="$REPO/rules"
-PROFILE=full
 RULES="$REPO/generated/AGENTS.md"
-GLOBAL_PROFILE="$HOME/.config/agent-rules/profile"
 PERSONAL="$HOME/.codex/agent-rules-personal.md"
 CODEX_HOOK="$REPO/hooks/codex-session-start.sh"
 # Migration: the PostToolUse prose hook this installer used to wire. Kept
@@ -44,22 +40,12 @@ head2(){ printf '\n%s\n' "$*"; }
 
 # ------------------------------------------------------------------- build
 
-# Each profile names every source explicitly; unlisted files are never installed.
-select_profile() {
-  PROFILE="$1"
-  case "$PROFILE" in
-    full) RULES="$REPO/generated/AGENTS.md" ;;
-    limited) RULES="$REPO/generated/AGENTS-limited.md" ;;
-    *) note "error: unknown profile: $PROFILE"; return 1 ;;
-  esac
-}
-
-sources() { cat "$REPO/profiles/$PROFILE.list"; }
+sources() { (cd "$REPO" && printf '%s\n' rules/*.md); }
 
 render() {
   local f
   printf '%s\n\n' "# Agent rules" \
-    'If ~/.codex/agent-rules-personal.md exists, follow its instructions in both profiles; read it only if its full contents are absent from the current context.'
+    'If ~/.codex/agent-rules-personal.md exists, follow its instructions; read it only if its full contents are absent from the current context.'
   while IFS= read -r f; do
     cat "$REPO/$f"
   done < <(sources)
@@ -73,20 +59,17 @@ fresh() {
 }
 
 build() {
-  local profile t
+  local t
   mkdir -p "$REPO/generated"
-  for profile in full limited; do
-    select_profile "$profile"
-    if fresh; then
-      say "  ok        $RULES (current)"
-    else
-      t="$(mktemp)"; render > "$t"
-      chmod 644 "$t"
-      mv "$t" "$RULES"
-      say "  rebuilt   $RULES"
-      CHANGED=1
-    fi
-  done
+  if fresh; then
+    say "  ok        $RULES (current)"
+  else
+    t="$(mktemp)"; render > "$t"
+    chmod 644 "$t"
+    mv "$t" "$RULES"
+    say "  rebuilt   $RULES"
+    CHANGED=1
+  fi
 }
 
 # ---------------------------------------------------------------- primitives
@@ -164,8 +147,8 @@ block() {
       printf '%s\n' "Read it only if its full contents are absent from the current context."
       printf '\n'
       printf '%s\n' "It covers prose written for humans: commit messages, PR bodies,"
-      printf '%s\n' "code comments, docs and chat replies, plus how to answer and how"
-      printf '%s\n' "to treat git history."
+      printf '%s\n' "code comments and docs, plus how to verify, write code and"
+      printf '%s\n' "treat git history."
     else
       printf '%s\n' "# Source: $RULES"
       printf '\n'
@@ -258,7 +241,7 @@ link_rules() {
     case "$tgt" in
       "$RULES_DIR"/*)
         if ! sources | grep -Fxq "${tgt#"$REPO/"}"; then
-          rm "$old"; say "  removed   $old (excluded from $PROFILE)"; CHANGED=1
+          rm "$old"; say "  removed   $old (no longer a rule)"; CHANGED=1
         fi ;;
     esac
   done
@@ -276,7 +259,7 @@ link_rules() {
 owned_link() {
   [ -L "$1" ] || return 1
   case "$(readlink "$1")" in
-    "$REPO/generated/AGENTS.md"|"$REPO/generated/AGENTS-limited.md") return 0 ;;
+    "$REPO/generated/"*) return 0 ;;
     *) return 1 ;;
   esac
 }
@@ -326,11 +309,6 @@ codex_personal() {
     (umask 077; cp "$tmp" "$PERSONAL") || { rm -f "$tmp"; return 1; }
   fi
   rm "$tmp"
-}
-
-save_profile() {
-  mkdir -p "$(dirname "$1")"
-  printf '%s\n' "$PROFILE" > "$1"
 }
 
 unlink_ours() {
@@ -387,8 +365,6 @@ state() {
   if [ -L "$dest" ]; then
     tgt="$(readlink "$dest")"
     case "$tgt" in
-      "$REPO/generated/AGENTS.md") printf 'linked (full)' ;;
-      "$REPO/generated/AGENTS-limited.md") printf 'linked (limited)' ;;
       "$REPO"/*) printf 'linked' ;; *) printf 'other link' ;; esac
   elif [ -f "$dest" ] && grep -qF "$MARK_BEGIN" "$dest" 2>/dev/null; then
     printf 'block'
@@ -402,8 +378,6 @@ state() {
 # ------------------------------------------------------------------- global
 
 do_global() {
-  local selected="${1:-full}"
-  select_profile "$selected"
   # An override would suppress the requested global symlink.
   if want "$HOME/.codex"; then
     if [ -s "$HOME/.codex/AGENTS.override.md" ]; then
@@ -411,11 +385,10 @@ do_global() {
     fi
     codex_personal || return 1
   fi
-  head2 "Global (user-level): $selected"
+  head2 "Global (user-level)"
 
-  say " Compiled profiles"
+  say " Compiled rules"
   build
-  select_profile "$selected"
 
   if want "$HOME/.claude"; then
     say " Claude Code"
@@ -427,7 +400,7 @@ do_global() {
 
   if want "$HOME/.codex"; then
     say " Codex"
-    # The trusted hook injects the selected artifact and migrated personal text.
+    # The trusted hook injects the artifact and migrated personal text.
     # The symlink loads the rules even before the hook is trusted.
     codex_hook "$HOME/.codex/config.toml"
     link "$HOME/.codex/AGENTS.md" "$RULES"
@@ -443,20 +416,17 @@ do_global() {
   else
     say  " Antigravity  not detected (~/.gemini missing); AGENT_RULES_ALL=1 to force"
   fi
-  save_profile "$GLOBAL_PROFILE"
 }
 
 # ------------------------------------------------------------------ project
 
 do_project() {
-  local selected="${2:-full}"
   dir="${1:-$PWD}"
   dir="$(cd "$dir" 2>/dev/null && pwd)" || { note "error: no such directory: ${1:-$PWD}"; return 1; }
   head2 "Project: $dir"
 
-  say " Compiled profiles"
+  say " Compiled rules"
   build
-  select_profile "$selected"
 
   say " Claude Code"
   link_rules "$dir/.claude/rules"
@@ -473,7 +443,6 @@ do_project() {
     say  "              Codex has no import syntax; paste the rules in, or rely"
     say  "              on the global install"
   fi
-  save_profile "$dir/.agent-rules-profile"
 }
 
 unwire_settings() {
@@ -505,42 +474,10 @@ unwire_settings() {
 
 # ------------------------------------------------------------------- status
 
-# Infer older installations which predate persisted profile selection.
-scope_profile() {
-  local marker="$1" agents="$2" rules_dir="$3" extra="${4:-}" f
-  if [ -f "$marker" ]; then cat "$marker"; return; fi
-  for f in "$agents" "$extra"; do
-    [ -f "$f" ] || [ -L "$f" ] || continue
-    if owned_link "$f"; then
-      case "$(readlink "$f")" in *AGENTS-limited.md) printf limited ;; *) printf full ;; esac
-      return
-    fi
-    if [ -f "$f" ]; then
-      if grep -qF "$REPO/generated/AGENTS-limited.md" "$f"; then printf limited; return; fi
-      if grep -qF "$REPO/generated/AGENTS.md" "$f"; then printf full; return; fi
-    fi
-  done
-  if owned_rule_link "$rules_dir/25-threads.md"; then printf full
-  elif owned_rule_link "$rules_dir/10-writing.md"; then printf unknown
-  else printf none
-  fi
-}
-
 do_status() {
   dir="${1:-$PWD}"
   head2 "Rules source: $RULES_DIR"
-  local global=none project=none profile
-  global="$(scope_profile "$GLOBAL_PROFILE" "$HOME/.codex/AGENTS.md" "$HOME/.claude/rules" "$HOME/.gemini/GEMINI.md")"
-  project="$(scope_profile "$dir/.agent-rules-profile" "$dir/AGENTS.md" "$dir/.claude/rules")"
-  say "global: $global"
-  say "project: $project"
-  if [ "$global" != none ] && [ "$project" != none ] && [ "$global" != "$project" ]; then
-    say "WARNING: mixed profiles; global rules still apply in this project"
-  fi
-  for profile in full limited; do
-    select_profile "$profile"
-    if fresh; then say "$RULES: current"; else say "$RULES: STALE; run make build"; fi
-  done
+  if fresh; then say "$RULES: current"; else say "$RULES: STALE; run make build"; fi
 
   printf '\n%-46s %s\n' "PATH" "STATE"
   for p in \
@@ -548,8 +485,6 @@ do_status() {
     "$dir/.claude/rules" \
     "$dir/.agents/rules"
   do
-    case "$p" in "$HOME/.claude/rules") profile="$global" ;; *) profile="$project" ;; esac
-    case "$profile" in full|limited) select_profile "$profile" ;; *) select_profile full ;; esac
     short="$(printf '%s' "$p" | sed "s|^$HOME/|~/|")/"
     printf '%-46s %s\n' "$short" "$(dir_state "$p")"
   done
@@ -567,7 +502,7 @@ do_status() {
   else
     printf '%-46s %s\n' "$short" "-"
   fi
-  printf '\nlinked (n) = all n sources of the selected profile are linked\n'
+  printf '\nlinked (n) = all n sources are linked\n'
   printf 'block = managed section inside a bigger file   hook = hook registered\n'
   printf 'occupied = something else is there   - = nothing\n'
 }
@@ -593,18 +528,15 @@ do_uninstall() {
   if owned_link "$dir/AGENTS.md"; then unlink_ours "$dir/AGENTS.md"; fi
   unwire_settings "$HOME/.claude/settings.json" "$STALE_HOOK"
   say  "project settings.json hook entry left in place; remove it by hand if you want it gone"
-  rm -f "$GLOBAL_PROFILE" "$dir/.agent-rules-profile"
   say  "backups (*.bak-*) and migrated personal instructions are never deleted"
 }
 
 # ---------------------------------------------------------------- interactive
 
 menu() {
-  opts="global	wire full user-level rules for every tool detected
-global-limited	wire limited user-level rules
-project	wire full project rules
-project-limited	wire limited project rules
-build	regenerate both compiled profiles
+  opts="global	wire user-level rules for every tool detected
+project	wire project rules
+build	regenerate generated/AGENTS.md
 status	show what is wired up right now
 uninstall	remove every link this installer made"
 
@@ -615,7 +547,7 @@ uninstall	remove every link this installer made"
   else
     say "fzf not found; falling back to a numbered prompt."
     PS3="choose > "
-    select pick in global global-limited project project-limited build status uninstall quit; do
+    select pick in global project build status uninstall quit; do
       [ -n "${pick:-}" ] && break
     done
     [ "${pick:-quit}" = "quit" ] && pick=""
@@ -623,11 +555,7 @@ uninstall	remove every link this installer made"
 
   [ -n "${pick:-}" ] || { say "nothing to do"; return 0; }
   case "$pick" in
-    build) head2 "Compiled profiles"; build ;;
-    project-limited)
-      printf 'path [%s]: ' "$PWD"; read -r ans
-      do_project "${ans:-$PWD}" limited ;;
-    global-limited) do_global limited ;;
+    build) head2 "Compiled rules"; build ;;
     project|status|uninstall)
       printf 'path [%s]: ' "$PWD"
       read -r ans
@@ -639,15 +567,13 @@ uninstall	remove every link this installer made"
 }
 
 usage() {
-  sed -n '2,17p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'
 }
 
 case "${1:-}" in
-  global)     do_global full ;;
-  global-limited) do_global limited ;;
-  project)    do_project "${2:-$PWD}" full ;;
-  project-limited) do_project "${2:-$PWD}" limited ;;
-  build)      head2 "Compiled profiles"; build ;;
+  global)     do_global ;;
+  project)    do_project "${2:-$PWD}" ;;
+  build)      head2 "Compiled rules"; build ;;
   status)     do_status  "${2:-$PWD}" ;;
   uninstall)  do_uninstall "${2:-$PWD}" ;;
   -h|--help|help) usage ;;
