@@ -1,21 +1,15 @@
 REPO := $(shell cd "$$(dirname "$(MAKEFILE_LIST)")" && pwd)/
 
-.PHONY: build install install-limited project project-limited status uninstall test
+.PHONY: build install project status uninstall test
 
-build:            ## regenerate both compiled profiles
+build:            ## regenerate generated/AGENTS.md
 	@"$(REPO)install.sh" build
 
 install:          ## wire the rules into every tool detected, user-level
 	@"$(REPO)install.sh" global
 
-project:          ## wire the full rules into DIR (default: cwd)
+project:          ## wire the rules into DIR (default: cwd)
 	@"$(REPO)install.sh" project "$(if $(DIR),$(DIR),$(CURDIR))"
-
-install-limited:  ## wire the limited profile, user-level
-	@"$(REPO)install.sh" global-limited
-
-project-limited:  ## wire the limited profile into DIR
-	@"$(REPO)install.sh" project-limited "$(if $(DIR),$(DIR),$(CURDIR))"
 
 test:             ## run installer integration tests with a temporary HOME
 	@python3 -B -m unittest discover -s "$(REPO)tests" -v

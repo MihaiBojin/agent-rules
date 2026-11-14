@@ -1,21 +1,15 @@
 # generated/
 
-`AGENTS.md` is the full profile. `AGENTS-limited.md` is the limited profile.
-`../install.sh build` compiles both from the sources explicitly named in
-`../profiles/full.list` and `../profiles/limited.list`. Generated edits are
-lost on the next build. Neither artifact contains personal instructions.
+`AGENTS.md` is every `../rules/*.md` compiled into one file by `../install.sh build`. Edits here are lost on the next
+build. It contains no personal instructions.
 
-Codex symlinks the selected artifact globally and in projects. Its global
-SessionStart hook reads the same selected file and injects migrated personal
-text from the user's home directory. Both artifacts instruct the agent to
-read that personal file when present. Claude Code and project Antigravity
-get symlinks to the selected source files. Global Antigravity gets an `@`
-include of the selected artifact.
+Codex symlinks it globally and in projects. Its global SessionStart hook reads the same file and injects migrated
+personal text from the user's home directory. The file instructs the agent to read that personal file when present.
+Claude Code and project Antigravity get symlinks to the source files. Global Antigravity gets an `@` include of this
+file.
 
-Both artifacts are committed and keep distinct paths across installations.
-They sit here so agents working on this repo do not load them as root guidance.
+It sits here so agents working on this repo do not load it as root guidance.
 
-Edit sources under `../rules/` and their profile lists, then run `make build`.
-`make status` reports freshness for both files. `make test` checks generated
-output against the checked-in artifacts and exercises the real installer with
-fake home directories, including full/limited switches and personal migration.
+Edit sources under `../rules/`, then run `make build`. `make status` reports whether it is current. `make test` checks
+the build against the checked-in file and exercises the real installer with fake home directories, including personal
+migration.
