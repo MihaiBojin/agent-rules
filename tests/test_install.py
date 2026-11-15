@@ -45,7 +45,7 @@ class InstallerTests(unittest.TestCase):
         self.assertNotIn('## Threads', rules)
         self.assertNotIn('## How to answer me', rules)
         self.assertIn('Verify, then assert.', rules)
-        self.assertIn('## Git and worktrees', rules)
+        self.assertIn('## Git and releases', rules)
         self.assertIn('## Code and architecture', rules)
         self.assertIn('do not apply to chat replies', rules)
         (self.repo / 'rules/99-new.md').write_text('NEW RULE\n')
