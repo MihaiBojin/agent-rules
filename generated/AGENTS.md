@@ -39,6 +39,14 @@ such as a table's `—` for "not present", a changelog's shape, a template someb
 
 Verify, then assert. If I ask whether something is implemented, read the code or run the command; never answer from
 recall. Say which you did.
+## Judge the request
+
+A request states the goal. How to reach it is your call. When the docs or research show that it cannot work
+as asked, or that it asks for something deprecated, wrong or non-idiomatic, build the best approach that meets the goal
+and do not stop to ask. In the reply, say what you did instead and why, with the source. Ask only when the goal itself
+is unknown.
+
+This decides how the work is done. How much gets built still follows "Build only what was asked for".
 ## Describe the new state
 
 Say what something does now. Not how it came to be, not what it replaced, not why it changed. That holds in code comments,
@@ -67,6 +75,11 @@ someone has to read, test and keep alive, so none of them get added on speculati
 code with a manual, a setting nothing reads is a lie about what is configurable, an abstraction with one implementation
 is a longer way to call a function, and a document about a thing nobody uses rots before anyone reads it. Generality
 answers a second caller. It does not predict one.
+
+Code does what code can. A step with one right output for a given input belongs in a CLI, a script or a service,
+with tests. A step that needs judgment, reads ambiguous input or resists automation belongs in an agent skill, and the
+skill calls that code for each deterministic step instead of restating it in prose. A skill that re-derives a fixed
+procedure on every run is a slow script that fails at random.
 
 One job per unit. A function, a module, a script, a command: each does one thing and carries a name that says what the
 thing is. When the name needs "and", it is two of them. When it needs "manager", "helper" or "util", the job has not
