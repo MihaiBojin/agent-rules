@@ -114,7 +114,7 @@ class InstallerTests(unittest.TestCase):
         status = self.run_make('status').stdout
         self.assertIn(f'{self.artifact}: current', status)
         project_rules = next(line for line in status.splitlines() if '~/project/.claude/rules/' in line)
-        self.assertIn('linked (5)', project_rules)
+        self.assertIn('linked (6)', project_rules)
 
     def test_personal_collisions_are_untouched(self):
         agents = self.project / 'AGENTS.md'

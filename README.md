@@ -9,9 +9,10 @@ one file per rule. The installer wires every `rules/*.md` into Claude Code, Code
 |---|---|
 | `rules/10-writing.md` | Prose conventions for docs, commit messages, PRs and code comments. |
 | `rules/18-verification.md` | Verify before asserting. |
+| `rules/20-judgment.md` | Pick the best approach when a request is wrong, deprecated or not possible. |
 | `rules/30-new-state.md` | Describe the current behavior in documentation, PRs and comments. |
 | `rules/40-git.md` | Worktree isolation, commit permission and signatures. |
-| `rules/60-code.md` | Build the requested scope with the smallest design that meets it. |
+| `rules/60-code.md` | Build the requested scope with the smallest design that meets it; deterministic steps are code, judgment is a skill. |
 
 How a chat reply reads, its numbered decision threads and its answer structure, comes from the `dialogue` plugin in
 [MihaiBojin/agent-plugins](https://github.com/MihaiBojin/agent-plugins), not from these rules.
