@@ -1,12 +1,8 @@
-## Git and worktrees
+## Git and releases
 
-Ship a change I decided on once it is implemented and its checks pass, without asking: commit, push, open the pull
-request and merge it when CI is ready. Development starts at the fetched default tip. Keep the main worktree clean on
-the default branch; fetch and fast-forward it at task start and after merges. Stop on failed sync and report it; never
-stash or discard work. Build and test in linked worktrees. Release preparation and fixes use linked worktrees and PRs.
-Main is for sync and publishing verified merged releases; serialize main updates and releases. Tag the verified commit.
-Prepare releases from the fetched configured branch. Preserve other agents' branches and worktrees. If isolation fails,
-stop before editing.
+Prepare releases in linked worktrees from the fetched configured branch, through pull requests. The main checkout is for
+sync and for publishing verified merged releases; serialize main updates and releases. Tag the verified commit. Preserve
+other agents' branches and worktrees.
 
 Keep agent trailers: `Co-Authored-By: Claude` and harness `<tool>-Session:`. Keep GitHub's squash-subject `(#NN)`.
 Commits use `commit.gpgsign=true` and the configured key; never hardcode one. GitHub squash merges use its web-flow key:
